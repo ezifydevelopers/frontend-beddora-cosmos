@@ -25,24 +25,25 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const router = useRouter()
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated)
   const user = useAppSelector((state) => state.auth.user)
+  const isLoading = useAppSelector((state) => state.auth.isLoading)
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !isLoading) {
       router.push('/login')
       return
     }
 
-    if (requireEmailVerification && user && !user.emailVerified) {
+    if (!isLoading && requireEmailVerification && user && !user.isVerified) {
       router.push('/verify-email')
       return
     }
-  }, [isAuthenticated, user, requireEmailVerification, router])
+  }, [isAuthenticated, isLoading, user, requireEmailVerification, router])
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || isLoading) {
     return null
   }
 
-  if (requireEmailVerification && user && !user.emailVerified) {
+  if (requireEmailVerification && user && !user.isVerified) {
     return null
   }
 

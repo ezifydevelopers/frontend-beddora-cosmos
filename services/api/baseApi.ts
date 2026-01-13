@@ -25,6 +25,7 @@ export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_URL,
+    credentials: 'include', // send cookies (for HttpOnly refresh token)
     prepareHeaders: (headers, { getState }) => {
       // Get token from Redux state (auth slice) with proper typing
       const state = getState() as RootState

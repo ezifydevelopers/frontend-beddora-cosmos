@@ -2,8 +2,8 @@
 
 import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { initializeAuth, setCredentials } from '@/store/auth.slice'
-import { useGetCurrentUserQuery } from '@/services/api/auth.api'
+import { initializeAuth, setCredentials, updateAccessToken, setLoading } from '@/store/auth.slice'
+import { useGetCurrentUserQuery, useRefreshTokenMutation } from '@/services/api/auth.api'
 import { useGetAccountsQuery } from '@/services/api/accounts.api'
 import { useGetMyPermissionsQuery } from '@/services/api/permissions.api'
 import { setAccounts, setActiveAccount } from '@/store/accounts.slice'
@@ -18,11 +18,35 @@ export const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ child
   const dispatch = useAppDispatch()
   const accessToken = useAppSelector((state) => state.auth.accessToken)
   const accountId = useAppSelector((state) => state.auth.accountId)
+  const [refresh, refreshState] = useRefreshTokenMutation()
 
   // Initialize auth from localStorage
   useEffect(() => {
+    dispatch(setLoading(true))
     dispatch(initializeAuth())
   }, [dispatch])
+
+  // Attempt refresh on load if no access token
+  useEffect(() => {
+    const doRefresh = async () => {
+      try {
+        dispatch(setLoading(true))
+        const result = await refresh().unwrap()
+        dispatch(updateAccessToken(result.accessToken))
+      } catch {
+        // ignore; user will be treated as unauthenticated
+      } finally {
+        dispatch(setLoading(false))
+      }
+    }
+    if (!accessToken && !refreshState.isLoading && !refreshState.isSuccess) {
+      void doRefresh()
+    }
+    if (accessToken) {
+      // If we already have a token, stop loading state
+      dispatch(setLoading(false))
+    }
+  }, [accessToken, refresh, refreshState.isLoading, refreshState.isSuccess, dispatch])
 
   // Load user data if authenticated
   const { data: user } = useGetCurrentUserQuery(undefined, {
@@ -45,17 +69,14 @@ export const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ child
   // Update store when data loads
   useEffect(() => {
     if (user && accessToken) {
-      const refreshToken = localStorage.getItem('refreshToken')
-      if (refreshToken) {
-        dispatch(
-          setCredentials({
-            user,
-            accessToken,
-            refreshToken,
-            accountId: accountId || undefined,
-          })
-        )
-      }
+      dispatch(
+        setCredentials({
+          user,
+          accessToken,
+          accountId: accountId || undefined,
+        })
+      )
+      dispatch(setLoading(false))
     }
   }, [user, accessToken, accountId, dispatch])
 

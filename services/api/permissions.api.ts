@@ -10,11 +10,15 @@ export interface UserPermissions {
 }
 
 export interface UpdateUserPermissionsRequest {
-  permissions: Array<{
+  permissions?: Array<{
     resource: string
     action: string
     accountId?: string
+    marketplaceId?: string
+    productId?: string
+    scope?: 'GLOBAL' | 'MARKETPLACE' | 'PRODUCT'
   }>
+  roles?: Array<{ roleId: string; accountId?: string }>
 }
 
 export const permissionsApi = baseApi.injectEndpoints({
@@ -37,10 +41,36 @@ export const permissionsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Permissions'],
     }),
+    listRoles: builder.query<any[], void>({
+      query: () => '/permissions/roles',
+      providesTags: ['Permissions'],
+    }),
+    createRole: builder.mutation<any, { name: string; description?: string }>({
+      query: (data) => ({
+        url: '/permissions/roles',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Permissions'],
+    }),
+    createPermission: builder.mutation<
+      any,
+      { name: string; resource: string; action: string; scope?: 'GLOBAL' | 'MARKETPLACE' | 'PRODUCT'; description?: string }
+    >({
+      query: (data) => ({
+        url: '/permissions/permissions',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Permissions'],
+    }),
   }),
 })
 
 export const {
   useGetMyPermissionsQuery,
   useUpdateUserPermissionsMutation,
+  useListRolesQuery,
+  useCreateRoleMutation,
+  useCreatePermissionMutation,
 } = permissionsApi

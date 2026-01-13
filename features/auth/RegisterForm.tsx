@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useRegisterMutation } from '@/services/api/auth.api'
+import Link from 'next/link'
 import { Input } from '@/design-system/inputs'
 import { Button } from '@/design-system/buttons'
-import Link from 'next/link'
+import { useRegister } from './useRegister'
+import { TermsCheckbox } from './TermsCheckbox'
 
 /**
  * Registration form component
@@ -13,19 +14,28 @@ import Link from 'next/link'
  */
 export const RegisterForm: React.FC = () => {
   const router = useRouter()
-  const [register, { isLoading }] = useRegisterMutation()
+  const { submit, isLoading } = useRegister()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     name: '',
     acceptTerms: false,
     acceptPrivacy: false,
   })
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
+
+    // Client-side validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
 
     if (!formData.acceptTerms || !formData.acceptPrivacy) {
       setError('You must accept Terms & Conditions and Privacy Policy')
@@ -33,8 +43,14 @@ export const RegisterForm: React.FC = () => {
     }
 
     try {
-      const result = await register(formData).unwrap()
-      // Redirect to email verification page
+      await submit({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        acceptTerms: formData.acceptTerms,
+        acceptPrivacy: formData.acceptPrivacy,
+      })
+      setSuccess('Registration successful. Check your email to verify your account.')
       router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`)
     } catch (err: any) {
       setError(err.data?.message || err.message || 'Registration failed. Please try again.')
@@ -64,46 +80,39 @@ export const RegisterForm: React.FC = () => {
         value={formData.password}
         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         required
-        helperText="Must be at least 8 characters with uppercase, lowercase, and number"
+        helperText="Min 8 chars with uppercase, lowercase, number, and special character"
+      />
+
+      <Input
+        type="password"
+        label="Confirm Password"
+        value={formData.confirmPassword}
+        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+        required
       />
 
       <div className="space-y-2">
-        <label className="flex items-start gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.acceptTerms}
-            onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
-            className="mt-1"
-            required
-          />
-          <span className="text-sm">
-            I accept the{' '}
-            <Link href="/terms" className="text-primary-600 hover:underline" target="_blank">
-              Terms & Conditions
-            </Link>
-          </span>
-        </label>
-
-        <label className="flex items-start gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.acceptPrivacy}
-            onChange={(e) => setFormData({ ...formData, acceptPrivacy: e.target.checked })}
-            className="mt-1"
-            required
-          />
-          <span className="text-sm">
-            I accept the{' '}
-            <Link href="/privacy" className="text-primary-600 hover:underline" target="_blank">
-              Privacy Policy
-            </Link>
-          </span>
-        </label>
+        <TermsCheckbox
+          checked={formData.acceptTerms}
+          onChange={(checked) => setFormData({ ...formData, acceptTerms: checked })}
+          label="terms"
+        />
+        <TermsCheckbox
+          checked={formData.acceptPrivacy}
+          onChange={(checked) => setFormData({ ...formData, acceptPrivacy: checked })}
+          label="privacy"
+        />
       </div>
 
       {error && (
         <div className="text-sm text-error-600 bg-error-50 p-3 rounded">
           {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="text-sm text-success-700 bg-success-50 p-3 rounded">
+          {success}
         </div>
       )}
 

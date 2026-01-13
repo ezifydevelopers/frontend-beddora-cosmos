@@ -18,7 +18,7 @@ export interface RegisterResponse {
     email: string
     name: string | null
     isActive: boolean
-    emailVerified: boolean
+    isVerified: boolean
     createdAt: string
   }
   message: string
@@ -34,17 +34,12 @@ export interface LoginResponse {
     id: string
     email: string
     name: string | null
-    emailVerified: boolean
+    isVerified: boolean
     roles: string[]
   }
   accessToken: string
-  refreshToken: string
   accountId?: string
   message: string
-}
-
-export interface RefreshTokenRequest {
-  refreshToken: string
 }
 
 export interface RefreshTokenResponse {
@@ -82,18 +77,18 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Auth'],
     }),
-    refreshToken: builder.mutation<RefreshTokenResponse, RefreshTokenRequest>({
-      query: (data) => ({
+    refreshToken: builder.mutation<RefreshTokenResponse, void>({
+      query: () => ({
         url: '/auth/refresh',
         method: 'POST',
-        body: data,
+        body: {},
       }),
     }),
-    logout: builder.mutation<{ message: string }, { refreshToken: string }>({
-      query: (data) => ({
+    logout: builder.mutation<{ message: string }, void>({
+      query: () => ({
         url: '/auth/logout',
         method: 'POST',
-        body: data,
+        body: {},
       }),
       invalidatesTags: ['Auth'],
     }),

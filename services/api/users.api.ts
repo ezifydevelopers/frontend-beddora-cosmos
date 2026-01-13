@@ -9,8 +9,8 @@ export interface User {
   email: string
   name: string | null
   isActive: boolean
-  emailVerified: boolean
-  emailVerifiedAt: string | null
+  isVerified: boolean
+  verifiedAt: string | null
   twoFactorEnabled: boolean
   roles: string[]
   createdAt: string
