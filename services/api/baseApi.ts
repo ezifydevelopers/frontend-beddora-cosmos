@@ -29,13 +29,13 @@ export const baseApi = createApi({
     prepareHeaders: (headers, { getState }) => {
       // Get token from Redux state (auth slice) with proper typing
       const state = getState() as RootState
-      const token = state.auth?.token
-      
+      const token = state.auth?.accessToken
+
       // Add authorization header if token exists
       if (token) {
         headers.set('authorization', `Bearer ${token}`)
       }
-      
+
       // Set content type
       headers.set('Content-Type', 'application/json')
       return headers
