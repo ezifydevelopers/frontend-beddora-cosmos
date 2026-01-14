@@ -49,6 +49,10 @@ const authSlice = createSlice({
     },
     updateAccessToken: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload
+      // If we have a token, we're authenticated (even if user data hasn't loaded yet)
+      if (action.payload) {
+        state.isAuthenticated = true
+      }
     },
     setAccountId: (state, action: PayloadAction<string | null>) => {
       state.accountId = action.payload

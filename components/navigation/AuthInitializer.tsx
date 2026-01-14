@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { initializeAuth, setCredentials, updateAccessToken, setLoading } from '@/store/auth.slice'
+import { initializeAuth, setCredentials, updateAccessToken, setLoading, clearCredentials } from '@/store/auth.slice'
 import { useGetCurrentUserQuery, useRefreshTokenMutation } from '@/services/api/auth.api'
 import { useGetAccountsQuery } from '@/services/api/accounts.api'
 import { useGetMyPermissionsQuery } from '@/services/api/permissions.api'
@@ -18,38 +18,52 @@ export const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ child
   const dispatch = useAppDispatch()
   const accessToken = useAppSelector((state) => state.auth.accessToken)
   const accountId = useAppSelector((state) => state.auth.accountId)
-  const [refresh, refreshState] = useRefreshTokenMutation()
+  const [refresh] = useRefreshTokenMutation()
+  const hasAttemptedRefresh = useRef(false)
+  const isInitialized = useRef(false)
 
-  // Initialize auth from localStorage
+  // Initialize auth from localStorage (only once)
   useEffect(() => {
-    dispatch(setLoading(true))
-    dispatch(initializeAuth())
+    if (!isInitialized.current) {
+      dispatch(setLoading(true))
+      dispatch(initializeAuth())
+      isInitialized.current = true
+    }
   }, [dispatch])
 
-  // Attempt refresh on load if no access token
+  // Attempt refresh on load if no access token (only once)
   useEffect(() => {
+    // Only attempt refresh once, and only if we don't have an access token
+    if (accessToken) {
+      // If we have a token, wait for user data to load before setting loading to false
+      return
+    }
+
+    // Prevent multiple refresh attempts
+    if (hasAttemptedRefresh.current) {
+      return
+    }
+
     const doRefresh = async () => {
+      hasAttemptedRefresh.current = true
       try {
         dispatch(setLoading(true))
         const result = await refresh().unwrap()
         dispatch(updateAccessToken(result.accessToken))
-      } catch {
-        // ignore; user will be treated as unauthenticated
-      } finally {
+        // Keep loading true until user data loads
+      } catch (error: any) {
+        // If refresh fails (401), clear credentials and stop trying
+        dispatch(clearCredentials())
         dispatch(setLoading(false))
+        // Don't retry on 401 - user needs to login again
       }
     }
-    if (!accessToken && !refreshState.isLoading && !refreshState.isSuccess) {
-      void doRefresh()
-    }
-    if (accessToken) {
-      // If we already have a token, stop loading state
-      dispatch(setLoading(false))
-    }
-  }, [accessToken, refresh, refreshState.isLoading, refreshState.isSuccess, dispatch])
+
+    void doRefresh()
+  }, [accessToken, refresh, dispatch])
 
   // Load user data if authenticated
-  const { data: user } = useGetCurrentUserQuery(undefined, {
+  const { data: user, error: userError, isLoading: isLoadingUser } = useGetCurrentUserQuery(undefined, {
     skip: !accessToken,
   })
 
@@ -77,8 +91,18 @@ export const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ child
         })
       )
       dispatch(setLoading(false))
+    } else if (accessToken && userError) {
+      // If we have a token but user query failed (e.g., 401), clear credentials
+      dispatch(clearCredentials())
+      dispatch(setLoading(false))
+    } else if (accessToken && !user && !isLoadingUser) {
+      // If we have a token but user data failed to load and we're not loading, clear auth
+      // This handles edge cases where the token is invalid
+      dispatch(clearCredentials())
+      dispatch(setLoading(false))
     }
-  }, [user, accessToken, accountId, dispatch])
+    // If accessToken exists but user is still loading, keep loading state (don't change it)
+  }, [user, accessToken, accountId, dispatch, userError, isLoadingUser])
 
   useEffect(() => {
     if (accounts) {

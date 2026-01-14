@@ -4,6 +4,9 @@ import authReducer from './auth.slice'
 import accountsReducer from './accounts.slice'
 import permissionsReducer from './permissions.slice'
 import uiReducer from './ui.slice'
+import manualImportReducer from './manualImport.slice'
+import profitReducer from './profit.slice'
+import profitKpisReducer from './profitKpis.slice'
 
 /**
  * Redux store configuration
@@ -24,6 +27,9 @@ export const store = configureStore({
     accounts: accountsReducer,
     permissions: permissionsReducer,
     ui: uiReducer,
+    manualImport: manualImportReducer,
+    profit: profitReducer,
+    profitKpis: profitKpisReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(baseApi.middleware),

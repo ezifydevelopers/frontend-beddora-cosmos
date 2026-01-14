@@ -83,6 +83,8 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         body: {},
       }),
+      // Don't retry on failure - if refresh fails, user needs to login again
+      extraOptions: { maxRetries: 0 },
     }),
     logout: builder.mutation<{ message: string }, void>({
       query: () => ({

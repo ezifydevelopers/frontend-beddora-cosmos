@@ -14,7 +14,7 @@ import { RootState } from '@/store/store'
  */
 
 // Define tag types for cache invalidation
-export const tagTypes = ['Auth', 'Accounts', 'Permissions', 'Profit', 'Inventory', 'PPC', 'Alerts', 'Reports'] as const
+export const tagTypes = ['Auth', 'Accounts', 'AmazonAccounts', 'Permissions', 'Profit', 'Inventory', 'PPC', 'Alerts', 'Reports'] as const
 
 export type TagType = typeof tagTypes[number]
 
@@ -36,8 +36,9 @@ export const baseApi = createApi({
         headers.set('authorization', `Bearer ${token}`)
       }
 
-      // Set content type
-      headers.set('Content-Type', 'application/json')
+      // Note: Don't set Content-Type here - RTK Query will handle it automatically
+      // For FormData, browser will set Content-Type with boundary
+      // For JSON, RTK Query will stringify and set Content-Type
       return headers
     },
   }),

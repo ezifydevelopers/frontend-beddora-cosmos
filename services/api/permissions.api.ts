@@ -9,6 +9,22 @@ export interface UserPermissions {
   roles: string[]
 }
 
+export interface Role {
+  id: string
+  name: string
+  description: string | null
+  createdAt: string
+  updatedAt: string
+  permissions?: Array<{
+    permission: {
+      id: string
+      name: string
+      resource: string
+      action: string
+    }
+  }>
+}
+
 export interface UpdateUserPermissionsRequest {
   permissions?: Array<{
     resource: string
@@ -39,9 +55,9 @@ export const permissionsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: ['Permissions'],
+      invalidatesTags: ['Permissions', 'Auth'],
     }),
-    listRoles: builder.query<any[], void>({
+    listRoles: builder.query<Role[], void>({
       query: () => '/permissions/roles',
       providesTags: ['Permissions'],
     }),
@@ -64,11 +80,19 @@ export const permissionsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Permissions'],
     }),
+    getUserPermissions: builder.query<UserPermissions, { userId: string; accountId?: string }>({
+      query: ({ userId, accountId }) => ({
+        url: `/permissions/${userId}`,
+        params: accountId ? { accountId } : {},
+      }),
+      providesTags: ['Permissions'],
+    }),
   }),
 })
 
 export const {
   useGetMyPermissionsQuery,
+  useGetUserPermissionsQuery,
   useUpdateUserPermissionsMutation,
   useListRolesQuery,
   useCreateRoleMutation,

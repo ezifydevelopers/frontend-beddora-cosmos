@@ -20,19 +20,32 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({ selectedRoleIds, onC
   }
 
   return (
-    <div className="space-y-2">
-      <div className="text-sm font-semibold text-secondary-900">Roles</div>
-      <div className="space-y-1">
-        {roles?.map((role) => (
-          <label key={role.id} className="flex items-center gap-2 text-sm text-secondary-800">
-            <input
-              type="checkbox"
-              checked={selectedRoleIds.includes(role.id)}
-              onChange={() => toggle(role.id)}
-            />
-            {role.name}
-          </label>
-        )) || <div className="text-sm text-secondary-600">No roles found.</div>}
+    <div className="space-y-3">
+      <div className="text-sm font-semibold text-secondary-900">Select Roles</div>
+      <div className="space-y-2">
+        {roles && roles.length > 0 ? (
+          roles.map((role) => (
+            <label
+              key={role.id}
+              className="flex items-start gap-3 p-3 border border-secondary-200 rounded-lg hover:bg-secondary-50 cursor-pointer transition-colors"
+            >
+              <input
+                type="checkbox"
+                checked={selectedRoleIds.includes(role.id)}
+                onChange={() => toggle(role.id)}
+                className="mt-1"
+              />
+              <div className="flex-1">
+                <div className="text-sm font-medium text-secondary-900">{role.name}</div>
+                {role.description && (
+                  <div className="text-xs text-secondary-500 mt-1">{role.description}</div>
+                )}
+              </div>
+            </label>
+          ))
+        ) : (
+          <div className="text-sm text-secondary-600 p-3">No roles found.</div>
+        )}
       </div>
     </div>
   )

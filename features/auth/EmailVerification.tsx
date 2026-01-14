@@ -42,7 +42,13 @@ export const EmailVerification: React.FC = () => {
           <CardTitle>Email Verification</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-secondary-600">No verification token provided.</p>
+          <p className="text-secondary-600 mb-2">
+            We&apos;ve sent a verification link to your email address.
+          </p>
+          <p className="text-secondary-600 mb-4">
+            Please open the email and click the verification link to activate your account.
+          </p>
+          <Button onClick={() => router.push('/login')}>Back to Login</Button>
         </CardContent>
       </Card>
     )

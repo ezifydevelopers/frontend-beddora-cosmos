@@ -4,6 +4,12 @@ import { baseApi } from './baseApi'
  * Users API endpoints
  */
 
+export interface Role {
+  id: string
+  name: string
+  description: string | null
+}
+
 export interface User {
   id: string
   email: string
@@ -15,6 +21,17 @@ export interface User {
   roles: string[]
   createdAt: string
   updatedAt: string
+}
+
+export interface UserListItem {
+  id: string
+  email: string
+  name: string | null
+  isActive: boolean
+  isVerified: boolean
+  verifiedAt: string | null
+  createdAt: string
+  roles: Role[]
 }
 
 export interface UpdateUserRequest {
@@ -48,6 +65,10 @@ export const usersApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+    listUsers: builder.query<UserListItem[], void>({
+      query: () => '/users',
+      providesTags: ['Auth'],
+    }),
   }),
 })
 
@@ -55,4 +76,5 @@ export const {
   useGetCurrentUserQuery,
   useUpdateCurrentUserMutation,
   useChangePasswordMutation,
+  useListUsersQuery,
 } = usersApi
