@@ -1,138 +1,116 @@
 import { baseApi } from './baseApi'
-import type { SyncLog, SyncType } from '@/store/amazon.slice'
 
 /**
  * Amazon API endpoints
  * 
- * RTK Query hooks for Amazon SP API sync operations
+ * Provides RTK Query hooks for Amazon SP-API integration testing
+ * Includes sandbox endpoints for development and testing
  */
 
-export interface SyncRequest {
-  amazonAccountId: string
-  startDate?: string
-  endDate?: string
-  marketplaceIds?: string[]
-  forceFullSync?: boolean
+// ============================================
+// TYPE DEFINITIONS
+// ============================================
+
+/**
+ * Sandbox Order
+ */
+export interface SandboxOrder {
+  orderId: string
+  orderDate: string
+  marketplace: string
+  totalAmount: number
+  currency?: string
+  orderStatus?: string
+  [key: string]: any // Allow additional fields from API
 }
 
-export interface SyncResponse {
+/**
+ * Sandbox Orders Response
+ */
+export interface SandboxOrdersResponse {
   success: boolean
-  message: string
-  data: {
-    success: boolean
-    recordsSynced: number
-    recordsFailed: number
-    errors?: string[]
-    syncLogId?: string
-  }
+  data: SandboxOrder[]
+  message?: string
+  timestamp?: string
 }
 
-export interface SyncLogsResponse {
-  success: boolean
-  data: SyncLog[]
-}
+// ============================================
+// RTK QUERY ENDPOINTS
+// ============================================
 
 export const amazonApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     /**
-     * POST /amazon/sync-orders
-     * Sync orders from Amazon
+     * Get sandbox orders
+     * Returns test/sandbox orders for SP-API integration testing
+     * 
+     * @param amazonAccountId - AmazonAccount ID from database (optional - if not provided, uses env vars)
+     * @param marketplaceId - Marketplace ID (optional)
+     * @param createdAfter - ISO date string (optional)
      */
-    syncOrders: builder.mutation<SyncResponse, SyncRequest>({
-      query: (data) => ({
-        url: '/amazon/sync-orders',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['AmazonAccounts'],
-    }),
+    getSandboxOrders: builder.query<
+      SandboxOrdersResponse,
+      { amazonAccountId?: string; marketplaceId?: string; createdAfter?: string }
+    >({
+      query: ({ amazonAccountId, marketplaceId, createdAfter }) => {
+        const params = new URLSearchParams()
+        if (amazonAccountId) params.append('amazonAccountId', amazonAccountId)
+        if (marketplaceId) params.append('marketplaceId', marketplaceId)
+        if (createdAfter) params.append('createdAfter', createdAfter)
 
-    /**
-     * POST /amazon/sync-fees
-     * Sync fees from Amazon
-     */
-    syncFees: builder.mutation<SyncResponse, SyncRequest>({
-      query: (data) => ({
-        url: '/amazon/sync-fees',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['AmazonAccounts'],
-    }),
-
-    /**
-     * POST /amazon/sync-ppc
-     * Sync PPC metrics from Amazon
-     */
-    syncPPC: builder.mutation<SyncResponse, SyncRequest>({
-      query: (data) => ({
-        url: '/amazon/sync-ppc',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['AmazonAccounts'],
-    }),
-
-    /**
-     * POST /amazon/sync-inventory
-     * Sync inventory levels from Amazon
-     */
-    syncInventory: builder.mutation<SyncResponse, SyncRequest>({
-      query: (data) => ({
-        url: '/amazon/sync-inventory',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['AmazonAccounts'],
-    }),
-
-    /**
-     * POST /amazon/sync-listings
-     * Sync listing changes from Amazon
-     */
-    syncListings: builder.mutation<SyncResponse, SyncRequest>({
-      query: (data) => ({
-        url: '/amazon/sync-listings',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['AmazonAccounts'],
-    }),
-
-    /**
-     * POST /amazon/sync-refunds
-     * Sync refunds from Amazon
-     */
-    syncRefunds: builder.mutation<SyncResponse, SyncRequest>({
-      query: (data) => ({
-        url: '/amazon/sync-refunds',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['AmazonAccounts'],
-    }),
-
-    /**
-     * GET /amazon/sync-logs
-     * Get sync logs
-     */
-    getSyncLogs: builder.query<SyncLog[], { amazonAccountId?: string; syncType?: SyncType; limit?: number }>({
-      query: (params) => ({
-        url: '/amazon/sync-logs',
-        method: 'GET',
-        params,
-      }),
+        const queryString = params.toString()
+        return {
+          url: `/amazon/sandbox/orders${queryString ? `?${queryString}` : ''}`,
+          method: 'GET',
+        }
+      },
       providesTags: ['AmazonAccounts'],
+      keepUnusedDataFor: 60, // Cache for 60 seconds
+    }),
+
+    /**
+     * Test sandbox connection
+     * Tests sandbox credentials and token exchange without fetching orders
+     * 
+     * @param amazonAccountId - AmazonAccount ID from database (optional - if not provided, uses env vars)
+     */
+    testSandboxConnection: builder.query<
+      {
+        success: boolean
+        message: string
+        amazonAccountId?: string
+        amazonSellerId?: string
+        marketplace?: string
+        appName?: string
+        appId?: string
+        tokenValid: boolean
+        timestamp: string
+      },
+      { amazonAccountId?: string }
+    >({
+      query: ({ amazonAccountId }) => {
+        const params = new URLSearchParams()
+        if (amazonAccountId) params.append('amazonAccountId', amazonAccountId)
+        
+        const queryString = params.toString()
+        return {
+          url: `/amazon/sandbox/test${queryString ? `?${queryString}` : ''}`,
+          method: 'GET',
+        }
+      },
+      providesTags: ['AmazonAccounts'],
+      keepUnusedDataFor: 30, // Cache for 30 seconds
     }),
   }),
 })
 
+// ============================================
+// EXPORTED HOOKS
+// ============================================
+
 export const {
-  useSyncOrdersMutation,
-  useSyncFeesMutation,
-  useSyncPPCMutation,
-  useSyncInventoryMutation,
-  useSyncListingsMutation,
-  useSyncRefundsMutation,
-  useGetSyncLogsQuery,
+  useGetSandboxOrdersQuery,
+  useLazyGetSandboxOrdersQuery,
+  useTestSandboxConnectionQuery,
+  useLazyTestSandboxConnectionQuery,
 } = amazonApi

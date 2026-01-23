@@ -67,32 +67,28 @@ export const Modal: React.FC<ModalProps> = ({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      onClick={onClose}
-    >
+    <div className="ds-modal-wrap" onClick={onClose}>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black bg-opacity-50" />
+      <div className="ds-modal-backdrop" />
       
       {/* Modal */}
       <div
         className={cn(
-          'relative bg-white rounded-lg shadow-xl',
+          'ds-modal',
           sizes[size],
-          'w-full mx-4 max-h-[90vh] overflow-y-auto',
           className
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {title && (
-          <div className="px-6 py-4 border-b border-secondary-200">
-            <h2 className="text-xl font-semibold text-secondary-900">{title}</h2>
+          <div className="ds-modal-header">
+            <h2 className="text-section-title">{title}</h2>
           </div>
         )}
-        <div className="px-6 py-4">{children}</div>
+        <div className="ds-modal-content">{children}</div>
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-secondary-400 hover:text-secondary-600"
+          className="ds-modal-close"
           aria-label="Close modal"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

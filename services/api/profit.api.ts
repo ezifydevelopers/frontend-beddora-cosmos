@@ -84,6 +84,37 @@ export interface MarketplaceProfitBreakdown {
 }
 
 /**
+ * Order item-level profit breakdown
+ */
+export interface OrderItemProfitBreakdown {
+  id: string
+  orderId: string
+  orderNumber: string
+  orderDate: string
+  orderStatus: string
+  shipDate?: string | null
+  marketplace: string
+  marketplaceCode: string
+  productId: string
+  sku: string
+  productTitle: string | null
+  productImageUrl: string | null
+  unitPrice: number
+  quantity: number
+  salesRevenue: number
+  refundCount: number
+  sellableReturnsPercent: number
+  amazonFees: number
+  cogs: number
+  grossProfit: number
+  expenses: number
+  netProfit: number
+  coupon?: string | null
+  comment?: string | null
+  currency: string
+}
+
+/**
  * Time-series profit trend data
  */
 export interface ProfitTrendData {
@@ -136,6 +167,87 @@ export interface ProfitTrendsApiResponse {
   data: ProfitTrendsResponse
 }
 
+export interface OrderItemsBreakdownResponse {
+  success: boolean
+  data: OrderItemProfitBreakdown[]
+  totalRecords: number
+}
+
+/**
+ * P&L (Profit & Loss) types
+ */
+export interface PLPeriodValue {
+  period: string
+  value: number
+}
+
+export interface PLMetricRow {
+  parameter: string
+  isExpandable: boolean
+  periods: PLPeriodValue[]
+  total: number
+  children?: PLMetricRow[] // Child metrics for expandable rows
+}
+
+export interface PLResponse {
+  periods: string[]
+  currentPeriod: string
+  metrics: PLMetricRow[]
+  startDate: string
+  endDate: string
+}
+
+export interface PLResponseApi {
+  success: boolean
+  data: PLResponse
+}
+
+/**
+ * Country-level profit breakdown
+ * Used for map visualization
+ */
+export interface CountryProfitBreakdown {
+  country: string // Country code (e.g., "US", "GB", "DE")
+  profit: number // Net profit for the country
+  orders: number // Number of orders for the country
+}
+
+/**
+ * Simplified profit trends response
+ * Used for Trends screen with simplified chart data format
+ */
+export interface ProfitTrendsSimpleResponse {
+  labels: string[] // Date labels (e.g., ["2026-01-01", "2026-01-02"])
+  profit: number[] // Net profit values for each period
+  revenue: number[] // Sales revenue values for each period
+}
+
+/**
+ * Product trend data for a specific date
+ */
+export interface ProductTrendDateValue {
+  date: string // Date in ISO format (YYYY-MM-DD)
+  value: number // Metric value for this date
+  changePercent: number // Percentage change from previous date
+}
+
+/**
+ * Product-level trends response
+ * Used for Trends screen showing product-level metrics over time
+ */
+export interface ProductTrendsResponse {
+  products: Array<{
+    productId: string
+    sku: string
+    productTitle: string | null
+    productImageUrl: string | null
+    dailyValues: ProductTrendDateValue[]
+    chartData: number[]
+  }>
+  dates: string[] // All dates in the range (YYYY-MM-DD format)
+  metric: string // The metric being displayed
+}
+
 // ============================================
 // RTK QUERY ENDPOINTS
 // ============================================
@@ -151,6 +263,7 @@ export const profitApi = baseApi.injectEndpoints({
         url: '/profit/summary',
         params: filters,
       }),
+      transformResponse: (response: ProfitSummaryResponse) => response.data,
       providesTags: ['Profit'],
       // Cache for 30 seconds to reduce load while allowing real-time updates
       keepUnusedDataFor: 30,
@@ -165,6 +278,7 @@ export const profitApi = baseApi.injectEndpoints({
         url: '/profit/by-product',
         params: filters,
       }),
+      transformResponse: (response: ProductBreakdownResponse) => response.data,
       providesTags: ['Profit'],
       keepUnusedDataFor: 30,
     }),
@@ -178,6 +292,7 @@ export const profitApi = baseApi.injectEndpoints({
         url: '/profit/by-marketplace',
         params: filters,
       }),
+      transformResponse: (response: MarketplaceBreakdownResponse) => response.data,
       providesTags: ['Profit'],
       keepUnusedDataFor: 30,
     }),
@@ -190,6 +305,97 @@ export const profitApi = baseApi.injectEndpoints({
       query: (filters) => ({
         url: '/profit/trends',
         params: filters,
+      }),
+      transformResponse: (response: ProfitTrendsApiResponse) => response.data,
+      providesTags: ['Profit'],
+      keepUnusedDataFor: 30,
+    }),
+
+    /**
+     * Get profit breakdown by order items
+     * Returns profit metrics for individual order items
+     */
+    getProfitByOrderItems: builder.query<OrderItemProfitBreakdown[], ProfitFilters>({
+      query: (filters) => ({
+        url: '/profit/by-order-items',
+        params: filters,
+      }),
+      transformResponse: (response: OrderItemsBreakdownResponse) => response.data,
+      providesTags: ['Profit'],
+      keepUnusedDataFor: 30,
+    }),
+
+    /**
+     * Get P&L (Profit & Loss) data by periods
+     * Returns financial metrics grouped by time periods (current month-to-date + past 12 months)
+     */
+    getPLByPeriods: builder.query<PLResponse, ProfitFilters>({
+      query: (filters) => ({
+        url: '/profit/pl',
+        params: filters,
+      }),
+      transformResponse: (response: PLResponseApi) => response.data,
+      providesTags: ['Profit'],
+      keepUnusedDataFor: 30,
+    }),
+
+    /**
+     * Get profit breakdown by country for map visualization
+     * Returns profit and orders per country
+     */
+    getProfitByCountry: builder.query<CountryProfitBreakdown[], ProfitFilters>({
+      query: (filters) => ({
+        url: '/profit/map',
+        params: {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          accountId: filters.accountId,
+          amazonAccountId: filters.amazonAccountId,
+        },
+      }),
+      providesTags: ['Profit'],
+      keepUnusedDataFor: 30,
+    }),
+
+    /**
+     * Get simplified profit trends for Trends screen
+     * Returns profit and revenue arrays for easy chart consumption
+     */
+    getProfitTrendsSimple: builder.query<
+      ProfitTrendsSimpleResponse,
+      ProfitFilters & { interval?: 'daily' | 'weekly' | 'monthly' }
+    >({
+      query: (filters) => ({
+        url: '/profit/trends/simple',
+        params: {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          interval: filters.interval || 'daily',
+          accountId: filters.accountId,
+          amazonAccountId: filters.amazonAccountId,
+        },
+      }),
+      providesTags: ['Profit'],
+      keepUnusedDataFor: 30,
+    }),
+
+    /**
+     * Get product-level trends for Trends screen
+     * Returns daily metric values for each product
+     */
+    getProductTrends: builder.query<
+      ProductTrendsResponse,
+      ProfitFilters & { metric?: string }
+    >({
+      query: (filters) => ({
+        url: '/profit/trends/products',
+        params: {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          metric: filters.metric || 'sales',
+          accountId: filters.accountId,
+          marketplaceId: filters.marketplaceId,
+        },
       }),
       providesTags: ['Profit'],
       keepUnusedDataFor: 30,
@@ -206,9 +412,19 @@ export const {
   useGetProfitByProductQuery,
   useGetProfitByMarketplaceQuery,
   useGetProfitTrendsQuery,
+  useGetProfitByOrderItemsQuery,
+  useGetPLByPeriodsQuery,
+  useGetProfitByCountryQuery,
+  useGetProfitTrendsSimpleQuery,
+  useGetProductTrendsQuery,
   // Lazy queries for manual fetching
   useLazyGetProfitSummaryQuery,
   useLazyGetProfitByProductQuery,
   useLazyGetProfitByMarketplaceQuery,
   useLazyGetProfitTrendsQuery,
+  useLazyGetProfitByOrderItemsQuery,
+  useLazyGetPLByPeriodsQuery,
+  useLazyGetProfitByCountryQuery,
+  useLazyGetProfitTrendsSimpleQuery,
+  useLazyGetProductTrendsQuery,
 } = profitApi

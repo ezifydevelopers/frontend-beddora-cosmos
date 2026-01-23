@@ -20,6 +20,7 @@ export interface LineChartProps {
   yKeys: Array<{ key: string; name: string; color?: string }>
   height?: number
   className?: string
+  onPointClick?: (payload?: LineChartData) => void
 }
 
 export const LineChart: React.FC<LineChartProps> = ({
@@ -28,11 +29,18 @@ export const LineChart: React.FC<LineChartProps> = ({
   yKeys,
   height = 300,
   className,
+  onPointClick,
 }) => {
+  const handleClick = (state: any) => {
+    if (!onPointClick) return
+    const payload = state?.activePayload?.[0]?.payload
+    onPointClick(payload)
+  }
+
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height={height}>
-        <RechartsLineChart data={data}>
+        <RechartsLineChart data={data} onClick={handleClick}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey={xKey} />
           <YAxis />

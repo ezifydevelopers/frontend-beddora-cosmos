@@ -17,6 +17,7 @@ interface User {
 interface AuthState {
   user: User | null
   accessToken: string | null
+  refreshToken: string | null
   accountId: string | null
   isAuthenticated: boolean
   isLoading: boolean
@@ -25,6 +26,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   accessToken: null,
+  refreshToken: null,
   accountId: null,
   isAuthenticated: false,
   isLoading: true, // start loading until refresh/auth check completes
@@ -39,11 +41,13 @@ const authSlice = createSlice({
       action: PayloadAction<{
         user: User
         accessToken: string
+        refreshToken?: string
         accountId?: string
       }>
     ) => {
       state.user = action.payload.user
       state.accessToken = action.payload.accessToken
+      state.refreshToken = action.payload.refreshToken || null
       state.accountId = action.payload.accountId || null
       state.isAuthenticated = true
     },
@@ -60,6 +64,7 @@ const authSlice = createSlice({
     clearCredentials: (state) => {
       state.user = null
       state.accessToken = null
+      state.refreshToken = null
       state.accountId = null
       state.isAuthenticated = false
     },

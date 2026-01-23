@@ -38,8 +38,12 @@ export interface AmazonAccount {
   id: string
   userId: string
   marketplace: string
+  amazonSellerId?: string
   sellerId: string
+  marketplaceIds?: string[]
+  region?: string
   isActive: boolean
+  lastTokenRefreshAt?: string
   createdAt: string
   updatedAt: string
 }
@@ -190,6 +194,44 @@ export const accountsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['AmazonAccounts'],
     }),
+
+    // ============================================
+    // OAUTH ENDPOINTS
+    // ============================================
+
+    /**
+     * GET /amazon/oauth/authorize
+     * Generate OAuth authorization URL
+     */
+    generateOAuthUrl: builder.query<
+      { authorizationUrl: string; state: string },
+      { redirectUri: string; marketplace?: string; clientId?: string }
+    >({
+      query: ({ redirectUri, marketplace, clientId }) => {
+        const params = new URLSearchParams({ redirectUri })
+        if (marketplace) params.append('marketplace', marketplace)
+        if (clientId) params.append('clientId', clientId)
+        return `/amazon/oauth/authorize?${params.toString()}`
+      },
+      transformResponse: (response: { success: boolean; data: { authorizationUrl: string; state: string } }) => response.data,
+    }),
+
+    /**
+     * GET /amazon/oauth/status
+     * Get OAuth configuration status
+     */
+    getOAuthStatus: builder.query<
+      {
+        oauthEnabled: boolean
+        hasClientId: boolean
+        hasClientSecret: boolean
+        clientIdPrefix: string | null
+      },
+      void
+    >({
+      query: () => '/amazon/oauth/status',
+      transformResponse: (response: { success: boolean; data: { oauthEnabled: boolean; hasClientId: boolean; hasClientSecret: boolean; clientIdPrefix: string | null } }) => response.data,
+    }),
   }),
 })
 
@@ -212,6 +254,8 @@ export const {
   useUpdateAmazonAccountMutation,
   useDeleteAmazonAccountMutation,
   useSwitchAmazonAccountMutation,
+  useGenerateOAuthUrlQuery,
+  useGetOAuthStatusQuery,
 } = accountsApi
 
 // ============================================

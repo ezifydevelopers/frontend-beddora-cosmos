@@ -20,10 +20,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
 export const Card: React.FC<CardProps> = ({ className, ...props }) => {
   return (
     <div
-      className={cn(
-        'bg-white rounded-lg border border-secondary-200 shadow-sm',
-        className
-      )}
+      className={cn('ds-card', className)}
       {...props}
     />
   )
@@ -35,7 +32,7 @@ export const CardHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
 }) => {
   return (
     <div
-      className={cn('px-6 py-4 border-b border-secondary-200', className)}
+      className={cn('ds-card-header', className)}
       {...props}
     />
   )
@@ -47,7 +44,19 @@ export const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({
 }) => {
   return (
     <h3
-      className={cn('text-lg font-semibold text-secondary-900', className)}
+      className={cn('text-section-title', className)}
+      {...props}
+    />
+  )
+}
+
+export const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
+  className,
+  ...props
+}) => {
+  return (
+    <p
+      className={cn('text-sm text-gray-500', className)}
       {...props}
     />
   )
@@ -58,7 +67,7 @@ export const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => {
   return (
-    <div className={cn('px-6 py-4', className)} {...props} />
+    <div className={cn('ds-card-content', className)} {...props} />
   )
 }
 
@@ -68,7 +77,7 @@ export const CardFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
 }) => {
   return (
     <div
-      className={cn('px-6 py-4 border-t border-secondary-200', className)}
+      className={cn('ds-card-footer', className)}
       {...props}
     />
   )

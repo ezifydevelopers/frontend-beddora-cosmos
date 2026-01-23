@@ -21,12 +21,13 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, error, helperText, options, className, id, ...props }, ref) => {
-    const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`
+    const reactId = React.useId()
+    const selectId = id || `select-${reactId}`
 
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={selectId} className="block text-sm font-medium text-secondary-700 mb-1">
+          <label htmlFor={selectId} className="ds-input-label">
             {label}
           </label>
         )}
@@ -34,12 +35,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           className={cn(
-            'w-full px-3 py-2 border rounded-lg shadow-sm bg-white',
-            'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500',
-            'disabled:bg-secondary-100 disabled:cursor-not-allowed',
+            'ds-input',
             error
-              ? 'border-error-500 focus:ring-error-500 focus:border-error-500'
-              : 'border-secondary-300',
+              ? 'ds-input-error'
+              : 'ds-input-default',
             className
           )}
           {...props}
@@ -51,10 +50,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           ))}
         </select>
         {error && (
-          <p className="mt-1 text-sm text-error-600">{error}</p>
+          <p className="ds-input-error-text">{error}</p>
         )}
         {helperText && !error && (
-          <p className="mt-1 text-sm text-secondary-500">{helperText}</p>
+          <p className="ds-input-helper">{helperText}</p>
         )}
       </div>
     )

@@ -1,15 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
-import { formatCurrency } from '@/utils/format'
+import React, { useEffect, useState } from 'react'
+import { formatCurrency, formatPercentage } from '@/utils/format'
+import { Button } from '@/design-system/buttons'
 import { Container } from '@/components/layout'
 import { PageHeader } from '@/components/layout'
-import {
-  ProfitSummaryCard,
-  ProfitBreakdownTable,
-  ProfitTrendChart,
-  FiltersPanel,
-} from './'
+import { ProfitSummaryCard } from './'
 import {
   useGetProfitSummaryQuery,
   useGetProfitByProductQuery,
@@ -25,11 +21,76 @@ import {
   useGetPayoutEstimateKPIQuery,
   KPIFilters,
 } from '@/services/api/kpis.api'
+import { KpiCard } from '@/design-system/kpi'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { setFilters } from '@/store/profit.slice'
 import { setActiveKPI, setKPIFilters } from '@/store/profitKpis.slice'
+import {
+  setSelectedSKU,
+  setShowForm,
+  setEditingCOGSId,
+  setShowHistorical,
+} from '@/store/profitCogs.slice'
+import {
+  setExpenseFilters,
+  setShowExpenseForm,
+  setShowBulkImport,
+  setEditingExpenseId,
+} from '@/store/profitExpenses.slice'
+import { setReturnFilters } from '@/store/profitReturns.slice'
+import { setChartFilters } from '@/store/profitCharts.slice'
 import { useGetAccountsQuery } from '@/services/api/accounts.api'
-import { KPICard, KPITable } from '../kpis'
+import { COGSCard, COGSForm, COGSHistoricalTable } from '../cogs'
+import {
+  ExpenseSummaryCard,
+  ExpenseTable,
+  ExpenseForm,
+  BulkImportModal,
+} from '../expenses'
+import { ReturnsSummaryCard, ReturnsTable, ReturnsChart } from '../returns'
+import {
+  FilterPanel as ChartsFilterPanel,
+  ProfitTrendChart as AnalyticsProfitTrendChart,
+  SalesTrendChart,
+  PPCCostChart,
+  ReturnsTrendChart,
+  ComparisonChart,
+} from '../charts'
+import { RevenueProfitTrendCard } from './RevenueProfitTrendCard'
+import { CostBreakdownChart } from './CostBreakdownChart'
+import { TopProductsTable } from './TopProductsTable'
+import { NavIcons } from '@/components/navigation/icons'
+import {
+  useGetCOGSBySKUQuery,
+  useCreateCOGSMutation,
+  useUpdateCOGSMutation,
+  useGetCOGSHistoricalQuery,
+  CreateCOGSRequest,
+  UpdateCOGSRequest,
+} from '@/services/api/cogs.api'
+import {
+  useGetExpensesQuery,
+  useCreateExpenseMutation,
+  useUpdateExpenseMutation,
+  useDeleteExpenseMutation,
+  useBulkImportExpensesMutation,
+  CreateExpenseRequest,
+  UpdateExpenseRequest,
+  ExpenseFilters,
+} from '@/services/api/expenses.api'
+import {
+  useGetReturnsQuery,
+  useGetReturnsSummaryQuery,
+  ReturnFilters,
+} from '@/services/api/returns.api'
+import {
+  ChartFilters,
+  useGetProfitTrendQuery,
+  useGetSalesTrendQuery,
+  useGetPpcTrendQuery,
+  useGetReturnsTrendQuery,
+  useGetComparisonQuery,
+} from '@/services/api/charts.api'
 
 /**
  * ProfitDashboard component
@@ -49,10 +110,25 @@ export const ProfitDashboard: React.FC = () => {
   const profitFilters = useAppSelector((state) => state.profit.filters)
   const kpiFilters = useAppSelector((state) => state.profitKpis.filters)
   const activeKPI = useAppSelector((state) => state.profitKpis.activeKPI)
-  const [activeBreakdown, setActiveBreakdown] = useState<'product' | 'marketplace'>('product')
+  const selectedSKU = useAppSelector((state) => state.profitCogs.selectedSKU)
+  const showCOGSForm = useAppSelector((state) => state.profitCogs.showForm)
+  const editingCOGSId = useAppSelector((state) => state.profitCogs.editingCOGSId)
+  const showCOGSHistorical = useAppSelector((state) => state.profitCogs.showHistorical)
+  const expenseFilters = useAppSelector((state) => state.profitExpenses.filters)
+  const showExpenseForm = useAppSelector((state) => state.profitExpenses.showForm)
+  const showBulkImport = useAppSelector((state) => state.profitExpenses.showBulkImport)
+  const editingExpenseId = useAppSelector((state) => state.profitExpenses.editingExpenseId)
+  const returnFilters = useAppSelector((state) => state.profitReturns.filters)
+  const chartFilters = useAppSelector((state) => state.profitCharts.filters)
 
   // Fetch accounts for filter dropdown
   const { data: accountsData } = useGetAccountsQuery()
+
+  useEffect(() => {
+    if (!profitFilters.accountId && accountsData?.length) {
+      dispatch(setFilters({ ...profitFilters, accountId: accountsData[0].id }))
+    }
+  }, [accountsData, dispatch, profitFilters])
 
   // Fetch profit data with current filters
   const {
@@ -78,6 +154,91 @@ export const ProfitDashboard: React.FC = () => {
     isLoading: trendsLoading,
     error: trendsError,
   } = useGetProfitTrendsQuery(profitFilters)
+
+  const effectiveExpenseFilters = {
+    ...expenseFilters,
+    accountId: profitFilters.accountId || accountsData?.[0]?.id,
+  }
+
+  const {
+    data: expensesResponse,
+    isLoading: expensesLoading,
+    error: expensesError,
+  } = useGetExpensesQuery(effectiveExpenseFilters, {
+    skip: !effectiveExpenseFilters.accountId,
+  })
+
+  const effectiveReturnFilters: ReturnFilters = {
+    ...returnFilters,
+    accountId: profitFilters.accountId || accountsData?.[0]?.id,
+    marketplaceId: profitFilters.marketplaceId,
+    sku: profitFilters.sku,
+  }
+
+  const {
+    data: returnsData,
+    isLoading: returnsLoading,
+    error: returnsError,
+  } = useGetReturnsQuery(effectiveReturnFilters, {
+    skip: !effectiveReturnFilters.accountId,
+  })
+
+  const {
+    data: returnsSummary,
+    isLoading: returnsSummaryLoading,
+    error: returnsSummaryError,
+  } = useGetReturnsSummaryQuery(effectiveReturnFilters, {
+    skip: !effectiveReturnFilters.accountId,
+  })
+
+  const effectiveChartFilters: ChartFilters = {
+    ...chartFilters,
+    accountId: profitFilters.accountId || accountsData?.[0]?.id,
+    amazonAccountId: profitFilters.amazonAccountId,
+    marketplaceId: profitFilters.marketplaceId,
+    sku: profitFilters.sku,
+  }
+
+  const {
+    data: profitTrendData,
+    isLoading: profitTrendLoading,
+    error: profitTrendError,
+  } = useGetProfitTrendQuery(effectiveChartFilters, { skip: !effectiveChartFilters.accountId })
+
+  const {
+    data: salesTrendData,
+    isLoading: salesTrendLoading,
+    error: salesTrendError,
+  } = useGetSalesTrendQuery(effectiveChartFilters, { skip: !effectiveChartFilters.accountId })
+
+  const {
+    data: ppcTrendData,
+    isLoading: ppcTrendLoading,
+    error: ppcTrendError,
+  } = useGetPpcTrendQuery(effectiveChartFilters, { skip: !effectiveChartFilters.accountId })
+
+  const {
+    data: returnsTrendData,
+    isLoading: returnsTrendLoading,
+    error: returnsTrendError,
+  } = useGetReturnsTrendQuery(effectiveChartFilters, { skip: !effectiveChartFilters.accountId })
+
+  const {
+    data: comparisonData,
+    isLoading: comparisonLoading,
+    error: comparisonError,
+  } = useGetComparisonQuery(
+    {
+      ...effectiveChartFilters,
+      metric: 'profit',
+    },
+    { skip: !effectiveChartFilters.accountId }
+  )
+
+  const [createExpense, { isLoading: isCreatingExpense }] = useCreateExpenseMutation()
+  const [updateExpense, { isLoading: isUpdatingExpense }] = useUpdateExpenseMutation()
+  const [deleteExpense] = useDeleteExpenseMutation()
+  const [bulkImportExpenses, { isLoading: isBulkImporting }] = useBulkImportExpensesMutation()
 
   // Fetch KPI data
   const kpiQueryFilters: KPIFilters = {
@@ -135,11 +296,135 @@ export const ProfitDashboard: React.FC = () => {
         period: newFilters.period || 'day',
       })
     )
+    dispatch(
+      setExpenseFilters({
+        ...expenseFilters,
+        accountId: newFilters.accountId,
+        marketplaceId: newFilters.marketplaceId,
+        sku: newFilters.sku,
+        startDate: newFilters.startDate,
+        endDate: newFilters.endDate,
+      })
+    )
+    dispatch(
+      setReturnFilters({
+        ...returnFilters,
+        accountId: newFilters.accountId,
+        marketplaceId: newFilters.marketplaceId,
+        sku: newFilters.sku,
+        startDate: newFilters.startDate,
+        endDate: newFilters.endDate,
+      })
+    )
+    dispatch(
+      setChartFilters({
+        ...chartFilters,
+        accountId: newFilters.accountId,
+        amazonAccountId: newFilters.amazonAccountId,
+        marketplaceId: newFilters.marketplaceId,
+        sku: newFilters.sku,
+        startDate: newFilters.startDate,
+        endDate: newFilters.endDate,
+      })
+    )
   }
 
   // Handle KPI drill-down
   const handleKPIDrillDown = (kpiType: 'units-sold' | 'returns-cost' | 'advertising-cost' | 'fba-fees' | 'payout-estimate') => {
     dispatch(setActiveKPI(kpiType))
+  }
+
+  const handleExpenseFiltersChange = (newFilters: ExpenseFilters) => {
+    dispatch(setExpenseFilters(newFilters))
+  }
+
+  const handleReturnFiltersChange = (newFilters: ReturnFilters) => {
+    dispatch(setReturnFilters(newFilters))
+  }
+
+  const handleChartFiltersChange = (newFilters: ChartFilters) => {
+    dispatch(setChartFilters(newFilters))
+  }
+
+  const handleExpenseSubmit = async (data: CreateExpenseRequest | UpdateExpenseRequest) => {
+    try {
+      if (editingExpenseId) {
+        await updateExpense({ id: editingExpenseId, data: data as UpdateExpenseRequest }).unwrap()
+      } else {
+        await createExpense(data as CreateExpenseRequest).unwrap()
+      }
+      dispatch(setShowExpenseForm(false))
+      dispatch(setEditingExpenseId(null))
+    } catch (error) {
+      console.error('Failed to save expense', error)
+    }
+  }
+
+  const handleExpenseDelete = async (expenseId: string) => {
+    try {
+      await deleteExpense(expenseId).unwrap()
+    } catch (error) {
+      console.error('Failed to delete expense', error)
+    }
+  }
+
+  const handleBulkImport = async (payload: { accountId: string; file: File }) => {
+    try {
+      await bulkImportExpenses(payload).unwrap()
+    } catch (error) {
+      console.error('Failed to bulk import expenses', error)
+    }
+  }
+
+  // COGS queries
+  const {
+    data: cogsData,
+    isLoading: cogsLoading,
+    error: cogsError,
+  } = useGetCOGSBySKUQuery(
+    {
+      sku: selectedSKU || '',
+      accountId: profitFilters.accountId || accountsData?.[0]?.id || '',
+    },
+    { skip: !selectedSKU || !profitFilters.accountId }
+  )
+
+  const {
+    data: cogsHistoricalData,
+    isLoading: cogsHistoricalLoading,
+    error: cogsHistoricalError,
+  } = useGetCOGSHistoricalQuery(
+    {
+      accountId: profitFilters.accountId || accountsData?.[0]?.id || '',
+      sku: selectedSKU || undefined,
+      marketplaceId: profitFilters.marketplaceId,
+      startDate: profitFilters.startDate,
+      endDate: profitFilters.endDate,
+    },
+    { skip: !profitFilters.accountId || !showCOGSHistorical }
+  )
+
+  const [createCOGS, { isLoading: isCreatingCOGS }] = useCreateCOGSMutation()
+  const [updateCOGS, { isLoading: isUpdatingCOGS }] = useUpdateCOGSMutation()
+
+  // Handle COGS form submission
+  const handleCOGSSubmit = async (data: CreateCOGSRequest | UpdateCOGSRequest) => {
+    try {
+      if (editingCOGSId) {
+        await updateCOGS({ id: editingCOGSId, data: data as UpdateCOGSRequest }).unwrap()
+      } else {
+        await createCOGS(data as CreateCOGSRequest).unwrap()
+      }
+      dispatch(setShowForm(false))
+      dispatch(setEditingCOGSId(null))
+    } catch (error) {
+      console.error('Failed to save COGS', error)
+    }
+  }
+
+  // Handle SKU selection from product breakdown
+  const handleSKUSelect = (sku: string) => {
+    dispatch(setSelectedSKU(sku))
   }
 
   // Extract marketplaces from accounts
@@ -283,6 +568,136 @@ export const ProfitDashboard: React.FC = () => {
           </div>
         )}
 
+        {/* Expenses Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Expenses</h2>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => dispatch(setShowExpenseForm(true))}>
+                Add Expense
+              </Button>
+              <Button variant="outline" onClick={() => dispatch(setShowBulkImport(true))}>
+                Bulk Import
+              </Button>
+            </div>
+          </div>
+
+          <ExpenseSummaryCard
+            summary={expensesResponse?.summary}
+            currency="USD"
+            isLoading={expensesLoading}
+            error={expensesError}
+          />
+
+          <ExpenseTable
+            expenses={expensesResponse?.data}
+            filters={expenseFilters}
+            onFiltersChange={handleExpenseFiltersChange}
+            marketplaces={marketplaces}
+            isLoading={expensesLoading}
+            error={expensesError}
+            onEdit={(expense) => dispatch(setEditingExpenseId(expense.id))}
+            onDelete={(expense) => handleExpenseDelete(expense.id)}
+          />
+
+          {showExpenseForm && (
+            <ExpenseForm
+              accountId={effectiveExpenseFilters.accountId || ''}
+              marketplaces={marketplaces}
+              initialData={
+                expensesResponse?.data?.find((item) => item.id === editingExpenseId) || undefined
+              }
+              onSubmit={handleExpenseSubmit}
+              onCancel={() => {
+                dispatch(setShowExpenseForm(false))
+                dispatch(setEditingExpenseId(null))
+              }}
+              isLoading={isCreatingExpense || isUpdatingExpense}
+            />
+          )}
+
+          <BulkImportModal
+            isOpen={showBulkImport}
+            onClose={() => dispatch(setShowBulkImport(false))}
+            accountId={effectiveExpenseFilters.accountId || ''}
+            onImport={handleBulkImport}
+            isLoading={isBulkImporting}
+          />
+        </div>
+
+        {/* Returns Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Returns & Refunds</h2>
+          </div>
+
+          <ReturnsSummaryCard
+            summary={returnsSummary}
+            currency="USD"
+            isLoading={returnsSummaryLoading}
+            error={returnsSummaryError}
+          />
+
+          <ReturnsChart
+            summary={returnsSummary}
+            currency="USD"
+            isLoading={returnsSummaryLoading}
+            error={returnsSummaryError}
+          />
+
+          <ReturnsTable
+            returns={returnsData}
+            filters={returnFilters}
+            onFiltersChange={handleReturnFiltersChange}
+            marketplaces={marketplaces}
+            isLoading={returnsLoading}
+            error={returnsError}
+          />
+        </div>
+
+        {/* Trend & Chart Analytics */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Trend & Chart Analytics</h2>
+          </div>
+
+          <ChartsFilterPanel
+            filters={chartFilters}
+            onFiltersChange={handleChartFiltersChange}
+            marketplaces={marketplaces}
+          />
+
+          <AnalyticsProfitTrendChart
+            data={profitTrendData}
+            isLoading={profitTrendLoading}
+            error={profitTrendError}
+          />
+
+          <SalesTrendChart
+            data={salesTrendData}
+            isLoading={salesTrendLoading}
+            error={salesTrendError}
+          />
+
+          <PPCCostChart
+            data={ppcTrendData}
+            isLoading={ppcTrendLoading}
+            error={ppcTrendError}
+          />
+
+          <ReturnsTrendChart
+            data={returnsTrendData}
+            isLoading={returnsTrendLoading}
+            error={returnsTrendError}
+          />
+
+          <ComparisonChart
+            data={comparisonData}
+            isLoading={comparisonLoading}
+            error={comparisonError}
+          />
+        </div>
+
         {/* Profit Trends Chart */}
         <ProfitTrendChart
           data={trendsData}
@@ -321,6 +736,7 @@ export const ProfitDashboard: React.FC = () => {
             productData={productData}
             isLoading={productLoading}
             error={productError}
+            onSKUClick={handleSKUSelect}
           />
         ) : (
           <ProfitBreakdownTable
@@ -329,6 +745,101 @@ export const ProfitDashboard: React.FC = () => {
             isLoading={marketplaceLoading}
             error={marketplaceError}
           />
+        )}
+
+        {/* COGS Section */}
+        {(selectedSKU || showCOGSForm || showCOGSHistorical) && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">COGS Management</h2>
+              <div className="flex gap-2">
+                {selectedSKU && (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => dispatch(setShowForm(true))}
+                    >
+                      Add COGS Entry
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => dispatch(setShowHistorical(!showCOGSHistorical))}
+                    >
+                      {showCOGSHistorical ? 'Hide' : 'Show'} History
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        dispatch(setSelectedSKU(null))
+                        dispatch(setShowForm(false))
+                        dispatch(setShowHistorical(false))
+                      }}
+                    >
+                      Close
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* COGS Card */}
+            {selectedSKU && (
+              <COGSCard
+                data={cogsData}
+                isLoading={cogsLoading}
+                error={cogsError}
+                onEdit={() => {
+                  // For now, just show form. In production, you'd load the specific entry
+                  dispatch(setShowForm(true))
+                }}
+              />
+            )}
+
+            {/* COGS Form */}
+            {showCOGSForm && (
+              <COGSForm
+                accountId={profitFilters.accountId || accountsData?.[0]?.id || ''}
+                sku={selectedSKU}
+                marketplaceId={profitFilters.marketplaceId}
+                marketplaces={marketplaces}
+                onSubmit={handleCOGSSubmit}
+                onCancel={() => {
+                  dispatch(setShowForm(false))
+                  dispatch(setEditingCOGSId(null))
+                }}
+                isLoading={isCreatingCOGS || isUpdatingCOGS}
+              />
+            )}
+
+            {/* COGS Historical Table */}
+            {showCOGSHistorical && (
+              <COGSHistoricalTable
+                data={cogsHistoricalData}
+                isLoading={cogsHistoricalLoading}
+                error={cogsHistoricalError}
+              />
+            )}
+          </div>
+        )}
+
+        {/* Quick SKU Selection from Product Table */}
+        {activeBreakdown === 'product' && productData && productData.length > 0 && (
+          <div className="mt-4 p-4 bg-secondary-50 rounded-lg">
+            <p className="text-sm text-secondary-600 mb-2">
+              Click a SKU in the table above to view/manage its COGS
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {productData.slice(0, 10).map((product) => (
+                <button
+                  key={product.sku}
+                  onClick={() => handleSKUSelect(product.sku)}
+                  className="px-3 py-1 bg-white border border-secondary-200 rounded hover:bg-secondary-100 text-sm font-mono"
+                >
+                  {product.sku}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </Container>

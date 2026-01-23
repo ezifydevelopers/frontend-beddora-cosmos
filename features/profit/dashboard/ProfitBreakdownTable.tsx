@@ -32,6 +32,7 @@ export interface ProfitBreakdownTableProps {
   isLoading?: boolean
   error?: any
   className?: string
+  onSKUClick?: (sku: string) => void
 }
 
 export const ProfitBreakdownTable: React.FC<ProfitBreakdownTableProps> = ({
@@ -41,6 +42,7 @@ export const ProfitBreakdownTable: React.FC<ProfitBreakdownTableProps> = ({
   isLoading,
   error,
   className,
+  onSKUClick,
 }) => {
   const [sortField, setSortField] = useState<keyof ProductProfitBreakdown | keyof MarketplaceProfitBreakdown>('salesRevenue')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
@@ -166,7 +168,18 @@ export const ProfitBreakdownTable: React.FC<ProfitBreakdownTableProps> = ({
               <TableBody>
                 {sortedData.map((item) => (
                   <TableRow key={item.sku}>
-                    <TableCell className="font-mono text-sm">{item.sku}</TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {onSKUClick ? (
+                        <button
+                          onClick={() => onSKUClick(item.sku)}
+                          className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                        >
+                          {item.sku}
+                        </button>
+                      ) : (
+                        item.sku
+                      )}
+                    </TableCell>
                     <TableCell className="max-w-xs truncate">
                       {item.productTitle || 'N/A'}
                     </TableCell>

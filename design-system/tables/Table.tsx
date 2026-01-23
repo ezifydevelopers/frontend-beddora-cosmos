@@ -27,11 +27,8 @@ export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {}
 
 export const Table: React.FC<TableProps> = ({ className, ...props }) => {
   return (
-    <div className="overflow-x-auto">
-      <table
-        className={cn('min-w-full divide-y divide-secondary-200', className)}
-        {...props}
-      />
+    <div className="ds-table-wrap">
+      <table className={cn('ds-table', className)} {...props} />
     </div>
   )
 }
@@ -41,7 +38,7 @@ export const TableHeader: React.FC<React.HTMLAttributes<HTMLTableSectionElement>
   ...props
 }) => {
   return (
-    <thead className={cn('bg-secondary-50', className)} {...props} />
+    <thead className={cn('ds-table-head', className)} {...props} />
   )
 }
 
@@ -50,7 +47,7 @@ export const TableBody: React.FC<React.HTMLAttributes<HTMLTableSectionElement>> 
   ...props
 }) => {
   return (
-    <tbody className={cn('bg-white divide-y divide-secondary-200', className)} {...props} />
+    <tbody className={cn('ds-table-body', className)} {...props} />
   )
 }
 
@@ -60,7 +57,7 @@ export const TableRow: React.FC<React.HTMLAttributes<HTMLTableRowElement>> = ({
 }) => {
   return (
     <tr
-      className={cn('hover:bg-secondary-50 transition-colors', className)}
+      className={cn('ds-table-row', className)}
       {...props}
     />
   )
@@ -72,10 +69,7 @@ export const TableHead: React.FC<React.ThHTMLAttributes<HTMLTableCellElement>> =
 }) => {
   return (
     <th
-      className={cn(
-        'px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider',
-        className
-      )}
+      className={cn('ds-table-th', className)}
       {...props}
     />
   )
@@ -87,7 +81,7 @@ export const TableCell: React.FC<React.TdHTMLAttributes<HTMLTableCellElement>> =
 }) => {
   return (
     <td
-      className={cn('px-6 py-4 whitespace-nowrap text-sm text-secondary-900', className)}
+      className={cn('ds-table-td', className)}
       {...props}
     />
   )

@@ -14,7 +14,45 @@ import { RootState } from '@/store/store'
  */
 
 // Define tag types for cache invalidation
-export const tagTypes = ['Auth', 'Accounts', 'AmazonAccounts', 'Permissions', 'Profit', 'Inventory', 'PPC', 'Alerts', 'Reports'] as const
+export const tagTypes = [
+  'Auth',
+  'Accounts',
+  'AmazonAccounts',
+  'Permissions',
+  'Profit',
+  'Inventory',
+  'InventoryForecast',
+  'InventoryKpis',
+  'PurchaseOrders',
+  'InboundShipments',
+  'PPC',
+  'PPCMetrics',
+  'PPCOptimization',
+  'PPCBulk',
+  'PPCProfit',
+  'ListingAlerts',
+  'BuyBoxAlerts',
+  'FeeChangeAlerts',
+  'FeedbackAlerts',
+  'EmailTemplates',
+  'EmailQueue',
+  'EmailStats',
+  'SchedulingRules',
+  'TrackingStats',
+  'RefundDiscrepancies',
+  'ReimbursementCases',
+  'Marketplaces',
+  'UserMarketplaces',
+  'Currencies',
+  'ExchangeRates',
+  'Alerts',
+  'Reports',
+  'SyncStatus',
+  'SyncLogs',
+  'QueueStats',
+  'FailedJobs',
+  'RetryStats',
+] as const
 
 export type TagType = typeof tagTypes[number]
 

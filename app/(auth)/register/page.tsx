@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { RegisterForm } from '@/features/auth'
-import { Container } from '@/components/layout'
+import { Container, Footer } from '@/components/layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/design-system/cards'
 
 /**
@@ -21,6 +21,9 @@ export default function RegisterPage() {
           </CardContent>
         </Card>
       </Container>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }
