@@ -27,6 +27,7 @@ import { MapComponent } from './components/MapComponent'
 import { TrendsComponent } from './components/TrendsComponent'
 import { ChartSummaryTable } from './components/ChartSummaryTable'
 import { SandboxOrdersTest } from './components'
+import { TileDetailsModal } from './components/TileDetailsModal'
 import { formatCurrency, formatPercentage, formatNumber } from '@/utils/format'
 
 /**
@@ -104,6 +105,7 @@ export const ProfitDashboardScreen: React.FC = () => {
   const [tableView, setTableView] = useState<TableView>('products')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('yesterday')
+  const [selectedPeriodForDetails, setSelectedPeriodForDetails] = useState<TimePeriod | null>(null)
 
   useEffect(() => {
     if (!profitFilters.accountId && accountsData?.length) {
@@ -605,7 +607,15 @@ export const ProfitDashboardScreen: React.FC = () => {
 
                   {/* More link */}
                   <div className="text-center">
-                    <button className="text-xs text-primary-600 hover:text-primary-700 hover:underline">More</button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedPeriodForDetails(period.id)
+                      }}
+                      className="text-xs text-primary-600 hover:text-primary-700 hover:underline"
+                    >
+                      More
+                    </button>
                   </div>
                 </div>
               </CardContent>
@@ -904,6 +914,18 @@ export const ProfitDashboardScreen: React.FC = () => {
         <div className="space-y-6">
           <SandboxOrdersTest />
         </div>
+      )}
+
+      {/* Tile Details Modal */}
+      {selectedPeriodForDetails && (
+        <TileDetailsModal
+          isOpen={!!selectedPeriodForDetails}
+          onClose={() => setSelectedPeriodForDetails(null)}
+          periodLabel={periodCardsData.find(p => p.id === selectedPeriodForDetails)?.label || ''}
+          dateRange={periodCardsData.find(p => p.id === selectedPeriodForDetails)?.dateRange || ''}
+          data={periodCardsData.find(p => p.id === selectedPeriodForDetails)?.data}
+          currency="CAD"
+        />
       )}
 
       </Container>

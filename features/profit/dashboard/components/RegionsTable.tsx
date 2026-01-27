@@ -201,7 +201,6 @@ export const RegionsTable: React.FC<RegionsTableProps> = ({
                 className="flex items-center gap-2 hover:text-primary-600"
               >
                 Region / Product
-                <SortIcon column="region" />
               </button>
             </TableHead>
             <TableHead>
@@ -210,7 +209,6 @@ export const RegionsTable: React.FC<RegionsTableProps> = ({
                 className="flex items-center gap-2 hover:text-primary-600"
               >
                 Stock
-                <SortIcon column="stock" />
               </button>
             </TableHead>
             <TableHead>
@@ -219,7 +217,6 @@ export const RegionsTable: React.FC<RegionsTableProps> = ({
                 className="flex items-center gap-2 hover:text-primary-600"
               >
                 Orders
-                <SortIcon column="orders" />
               </button>
             </TableHead>
             <TableHead>
@@ -228,7 +225,6 @@ export const RegionsTable: React.FC<RegionsTableProps> = ({
                 className="flex items-center gap-2 hover:text-primary-600"
               >
                 Units sold
-                <SortIcon column="unitsSold" />
               </button>
             </TableHead>
             <TableHead>
@@ -237,7 +233,6 @@ export const RegionsTable: React.FC<RegionsTableProps> = ({
                 className="flex items-center gap-2 hover:text-primary-600"
               >
                 Sales
-                <SortIcon column="sales" />
               </button>
             </TableHead>
             <TableHead>
@@ -246,7 +241,6 @@ export const RegionsTable: React.FC<RegionsTableProps> = ({
                 className="flex items-center gap-2 hover:text-primary-600"
               >
                 Amazon fees
-                <SortIcon column="amazonFees" />
               </button>
             </TableHead>
             <TableHead>Sellable returns</TableHead>
@@ -258,7 +252,6 @@ export const RegionsTable: React.FC<RegionsTableProps> = ({
                 className="flex items-center gap-2 hover:text-primary-600"
               >
                 Gross profit
-                <SortIcon column="grossProfit" />
               </button>
             </TableHead>
             <TableHead>Info</TableHead>

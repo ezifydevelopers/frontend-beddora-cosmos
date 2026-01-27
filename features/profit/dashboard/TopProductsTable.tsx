@@ -147,37 +147,37 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({ products, is
                     className="cursor-pointer hover:bg-surface-secondary"
                     onClick={() => handleSort('name')}
                   >
-                    Product <SortIcon column="name" />
+                    Product
                   </TableHead>
                   <TableHead
                     className="cursor-pointer hover:bg-surface-secondary"
                     onClick={() => handleSort('sku')}
                   >
-                    SKU <SortIcon column="sku" />
+                    SKU
                   </TableHead>
                   <TableHead
                     className="cursor-pointer hover:bg-surface-secondary"
                     onClick={() => handleSort('units')}
                   >
-                    Units Sold <SortIcon column="units" />
+                    Units Sold
                   </TableHead>
                   <TableHead
                     className="cursor-pointer hover:bg-surface-secondary"
                     onClick={() => handleSort('revenue')}
                   >
-                    Revenue <SortIcon column="revenue" />
+                    Revenue
                   </TableHead>
                   <TableHead
                     className="cursor-pointer hover:bg-surface-secondary"
                     onClick={() => handleSort('profit')}
                   >
-                    Profit <SortIcon column="profit" />
+                    Profit
                   </TableHead>
                   <TableHead
                     className="cursor-pointer hover:bg-surface-secondary"
                     onClick={() => handleSort('margin')}
                   >
-                    Margin <SortIcon column="margin" />
+                    Margin
                   </TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>

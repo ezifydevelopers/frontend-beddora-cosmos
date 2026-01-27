@@ -16,10 +16,57 @@
 
   * {
     @apply border-border;
+    border-radius: 0 !important;
   }
 
   body {
     @apply bg-background text-text-primary font-sans;
+  }
+
+  /* Global table font styles - must be in base layer to override Tailwind utilities */
+  table {
+    font-size: 13px !important;
+    font-family: sans-serif !important;
+  }
+
+  table th,
+  table td {
+    font-size: 13px !important;
+    font-family: sans-serif !important;
+    padding: 8px 12px !important;
+    line-height: 1.4 !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+  }
+
+  table th {
+    max-width: 200px !important;
+  }
+
+  table td {
+    max-width: 300px !important;
+  }
+
+  /* Allow specific cells to have nowrap when needed */
+  table td.whitespace-nowrap,
+  table th.whitespace-nowrap {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 200px !important;
+  }
+
+  /* Override Tailwind text size classes within tables */
+  table th.text-xs,
+  table td.text-xs,
+  table th.text-sm,
+  table td.text-sm,
+  table th.text-base,
+  table td.text-base,
+  table th.text-lg,
+  table td.text-lg {
+    font-size: 13px !important;
   }
 }
 
@@ -34,10 +81,17 @@
 
   .text-table-header {
     @apply text-xs font-semibold uppercase tracking-wider text-text-muted;
+    font-size: 13px !important;
   }
 
   .text-body {
     @apply text-sm text-text-primary;
+  }
+
+  /* Override text-body font size when used in tables */
+  table .text-body,
+  .ds-table .text-body {
+    font-size: 13px !important;
   }
 
   .text-muted {
@@ -70,7 +124,7 @@
   }
 
   .ds-nav-item {
-    @apply flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-150 text-sm;
+    @apply flex items-center gap-3 px-4 py-2 transition-colors duration-150 text-sm;
   }
 
   .ds-nav-item-active {
@@ -119,7 +173,7 @@
 
   /* Buttons */
   .ds-button {
-    @apply inline-flex items-center justify-center font-medium rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .ds-button-primary {
@@ -155,12 +209,12 @@
   }
 
   .ds-icon-button {
-    @apply p-2 rounded-md text-text-muted hover:text-text-primary hover:bg-secondary-100 transition-colors duration-150;
+    @apply p-2 text-text-muted hover:text-text-primary hover:bg-secondary-100 transition-colors duration-150;
   }
 
   /* Cards */
   .ds-card {
-    @apply bg-surface rounded-xl border border-border shadow-card;
+    @apply bg-surface border border-border shadow-card;
   }
 
   .ds-card-header {
@@ -181,7 +235,7 @@
   }
 
   .ds-input {
-    @apply w-full px-3 py-2 border rounded-md bg-surface text-text-primary placeholder:text-text-muted shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-600 disabled:bg-secondary-100 disabled:cursor-not-allowed;
+    @apply w-full px-3 py-2 border bg-surface text-text-primary placeholder:text-text-muted shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-600 disabled:bg-secondary-100 disabled:cursor-not-allowed;
   }
 
   .ds-input-error {
@@ -203,10 +257,16 @@
   /* Tables */
   .ds-table-wrap {
     @apply overflow-x-auto;
+    width: 100% !important;
   }
 
   .ds-table {
     @apply min-w-full divide-y divide-border;
+    font-size: 13px !important;
+    font-family: sans-serif !important;
+    border-spacing: 0 !important;
+    table-layout: auto !important;
+    width: 100% !important;
   }
 
   .ds-table-head {
@@ -219,19 +279,121 @@
 
   .ds-table-row {
     @apply hover:bg-secondary-50 transition-colors duration-150;
+    line-height: 1.4 !important;
   }
 
   .ds-table-th {
-    @apply px-6 py-3 text-left text-table-header;
+    @apply text-left text-table-header;
+    font-size: 13px !important;
+    font-family: sans-serif !important;
+    padding: 8px 12px !important;
+    line-height: 1.4 !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 200px !important;
   }
 
   .ds-table-td {
-    @apply px-6 py-4 whitespace-nowrap text-body;
+    @apply text-body;
+    font-size: 13px !important;
+    font-family: sans-serif !important;
+    padding: 8px 12px !important;
+    line-height: 1.4 !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    max-width: 300px !important;
+  }
+
+  /* Allow specific cells to have nowrap when needed */
+  .ds-table-td.whitespace-nowrap {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 200px !important;
+  }
+
+  /* Override text size classes within table components */
+  .ds-table th.text-xs,
+  .ds-table td.text-xs,
+  .ds-table th.text-sm,
+  .ds-table td.text-sm,
+  .ds-table th.text-base,
+  .ds-table td.text-base,
+  .ds-table th.text-lg,
+  .ds-table td.text-lg,
+  .ds-table th.text-body,
+  .ds-table td.text-body,
+  .ds-table th.text-table-header,
+  .ds-table td.text-table-header {
+    font-size: 13px !important;
+  }
+
+  /* Ensure table cells don't overflow */
+  .ds-table td,
+  .ds-table th {
+    vertical-align: top !important;
+  }
+
+  /* Allow text to wrap in table cells */
+  .ds-table td:not(.whitespace-nowrap),
+  .ds-table th:not(.whitespace-nowrap) {
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  /* Sticky column styles - prevent overlapping when scrolling */
+  .ds-table th.sticky,
+  .ds-table td.sticky,
+  table th.sticky,
+  table td.sticky {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 20 !important;
+    border-right: 2px solid rgb(229, 231, 235) !important;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Ensure sticky header has higher z-index */
+  .ds-table th.sticky,
+  table th.sticky {
+    z-index: 30 !important;
+  }
+
+  /* Sticky column with specific background colors - ensure they don't inherit */
+  .ds-table th.sticky.bg-surface,
+  .ds-table td.sticky.bg-surface,
+  table th.sticky.bg-surface,
+  table td.sticky.bg-surface {
+    background-color: rgb(255, 255, 255) !important;
+  }
+
+  .ds-table th.sticky.bg-surface-secondary,
+  .ds-table td.sticky.bg-surface-secondary,
+  table th.sticky.bg-surface-secondary,
+  table td.sticky.bg-surface-secondary {
+    background-color: rgb(249, 250, 251) !important;
+  }
+
+  .ds-table th.sticky.bg-secondary-50,
+  .ds-table td.sticky.bg-secondary-50,
+  table th.sticky.bg-secondary-50,
+  table td.sticky.bg-secondary-50 {
+    background-color: rgb(249, 250, 251) !important;
+  }
+
+  /* Ensure sticky columns maintain proper width to prevent overlap */
+  .ds-table th.sticky,
+  .ds-table td.sticky,
+  table th.sticky,
+  table td.sticky {
+    width: auto !important;
   }
 
   /* Badges */
   .ds-badge {
-    @apply inline-flex items-center font-medium rounded-full border;
+    @apply inline-flex items-center font-medium border;
   }
 
   .ds-badge-sm {
@@ -268,11 +430,11 @@
 
   /* Tabs */
   .ds-tabs {
-    @apply inline-flex items-center rounded-lg bg-secondary-100 p-1;
+    @apply inline-flex items-center bg-secondary-100 p-1;
   }
 
   .ds-tab {
-    @apply rounded-md font-medium transition-colors duration-150;
+    @apply font-medium transition-colors duration-150;
   }
 
   .ds-tab-active {
@@ -301,7 +463,7 @@
   }
 
   .ds-modal {
-    @apply relative bg-surface rounded-xl shadow-lg border border-border w-full mx-4 max-h-[90vh] overflow-y-auto;
+    @apply relative bg-surface shadow-lg border border-border w-full mx-4 max-h-[90vh] overflow-y-auto;
   }
 
   .ds-modal-header {
@@ -332,6 +494,37 @@
   
   .animate-fade-in {
     animation: fade-in 0.6s ease-out;
+  }
+
+  /* Table font size utility - ensures 13px font size */
+  .text-table {
+    font-size: 13px !important;
+    font-family: sans-serif !important;
+  }
+
+  /* Override all Tailwind rounded classes */
+  .rounded-none,
+  .rounded-sm,
+  .rounded,
+  .rounded-md,
+  .rounded-lg,
+  .rounded-xl,
+  .rounded-2xl,
+  .rounded-3xl,
+  .rounded-full,
+  .rounded-t-none,
+  .rounded-r-none,
+  .rounded-b-none,
+  .rounded-l-none,
+  .rounded-t,
+  .rounded-r,
+  .rounded-b,
+  .rounded-l,
+  .rounded-tl,
+  .rounded-tr,
+  .rounded-br,
+  .rounded-bl {
+    border-radius: 0 !important;
   }
 }
 

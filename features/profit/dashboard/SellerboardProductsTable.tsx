@@ -191,74 +191,74 @@ export const SellerboardProductsTable: React.FC<SellerboardProductsTableProps> =
                 className="cursor-pointer hover:bg-surface-secondary max-w-[250px]"
                 onClick={() => handleSort('name')}
               >
-                Product <SortIcon column="name" />
+                Product
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('units')}
               >
-                Units sold <SortIcon column="units" />
+                Units sold
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('refunds')}
               >
-                Refunds <SortIcon column="refunds" />
+                Refunds
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('sales')}
               >
-                Sales <SortIcon column="sales" />
+                Sales
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('promo')}
               >
-                Promo <SortIcon column="promo" />
+                Promo
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('ads')}
               >
-                Ads <SortIcon column="ads" />
+                Ads
               </TableHead>
               <TableHead className="text-right">Refund cost</TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('amazonFees')}
               >
-                Amazon fees <SortIcon column="amazonFees" />
+                Amazon fees
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('cogs')}
               >
-                Cost of goods <SortIcon column="cogs" />
+                Cost of goods
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('grossProfit')}
               >
-                Gross profit <SortIcon column="grossProfit" />
+                Gross profit
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('netProfit')}
               >
-                Net profit <SortIcon column="netProfit" />
+                Net profit
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('margin')}
               >
-                Margin <SortIcon column="margin" />
+                Margin
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('roi')}
               >
-                ROI <SortIcon column="roi" />
+                ROI
               </TableHead>
               <TableHead className="text-right">BSR</TableHead>
               <TableHead className="text-center">Info</TableHead>

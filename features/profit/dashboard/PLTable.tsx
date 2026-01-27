@@ -193,11 +193,11 @@ export const PLTable: React.FC<PLTableProps> = ({
   return (
     <Card>
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto relative">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="min-w-[200px] sticky left-0 bg-surface z-10">
+                <TableHead className="min-w-[200px] max-w-[250px] sticky left-0 bg-surface z-10">
                   Parameter/Date
                 </TableHead>
                       {data.periods.map((period, index) => (
@@ -221,11 +221,11 @@ export const PLTable: React.FC<PLTableProps> = ({
                       className={`hover:bg-surface-secondary cursor-pointer ${!hasValue ? 'opacity-50' : ''}`}
                       onClick={() => metric.isExpandable && toggleRow(metric.parameter)}
                     >
-                      <TableCell className="sticky left-0 bg-surface z-10">
+                      <TableCell className="sticky left-0 bg-surface z-10 min-w-[200px] max-w-[250px]">
                         <div className="flex items-center gap-2">
                           {metric.isExpandable && (
                             <svg
-                              className={`w-4 h-4 text-text-muted transition-transform ${
+                              className={`w-4 h-4 text-text-muted transition-transform flex-shrink-0 ${
                                 isExpanded ? 'rotate-90' : ''
                               }`}
                               fill="none"
@@ -240,7 +240,7 @@ export const PLTable: React.FC<PLTableProps> = ({
                               />
                             </svg>
                           )}
-                          <span className="font-medium">{metric.parameter}</span>
+                          <span className="font-medium break-words">{metric.parameter}</span>
                         </div>
                       </TableCell>
                       {data.periods.map((periodLabel, periodIndex) => {
@@ -265,8 +265,8 @@ export const PLTable: React.FC<PLTableProps> = ({
                               key={`${metric.parameter}-${child.parameter}`}
                               className={`bg-surface-secondary hover:bg-surface-tertiary ${!childHasValue ? 'opacity-50' : ''}`}
                             >
-                              <TableCell className="sticky left-0 bg-surface-secondary z-10 pl-8">
-                                <span className="text-sm">{child.parameter}</span>
+                              <TableCell className="sticky left-0 bg-surface-secondary z-10 pl-8 min-w-[200px] max-w-[250px]">
+                                <span className="text-sm break-words">{child.parameter}</span>
                               </TableCell>
                               {data.periods.map((periodLabel, periodIndex) => {
                                 const periodValue = child.periods[periodIndex]?.value || 0

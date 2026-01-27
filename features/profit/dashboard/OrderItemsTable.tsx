@@ -212,61 +212,61 @@ export const OrderItemsTable: React.FC<OrderItemsTableProps> = ({
                 className="cursor-pointer hover:bg-surface-secondary min-w-[280px]"
                 onClick={() => handleSort('orderNumber')}
               >
-                Order number <SortIcon column="orderNumber" />
+                Order number
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary max-w-[250px]"
                 onClick={() => handleSort('product')}
               >
-                Product <SortIcon column="product" />
+                Product
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('unitsSold')}
               >
-                Units sold <SortIcon column="unitsSold" />
+                Units sold
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('refunds')}
               >
-                Refunds <SortIcon column="refunds" />
+                Refunds
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('sales')}
               >
-                Sales <SortIcon column="sales" />
+                Sales
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('sellableReturns')}
               >
-                Sellable returns <SortIcon column="sellableReturns" />
+                Sellable returns
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('amazonFees')}
               >
-                Amazon fees <SortIcon column="amazonFees" />
+                Amazon fees
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('grossProfit')}
               >
-                Gross profit <SortIcon column="grossProfit" />
+                Gross profit
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('expenses')}
               >
-                Expenses <SortIcon column="expenses" />
+                Expenses
               </TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-surface-secondary text-right"
                 onClick={() => handleSort('netProfit')}
               >
-                Net profit <SortIcon column="netProfit" />
+                Net profit
               </TableHead>
               <TableHead className="text-left">Coupon</TableHead>
               <TableHead className="text-left">Comment</TableHead>
