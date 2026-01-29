@@ -253,6 +253,7 @@ export interface ProductTrendsResponse {
 // ============================================
 
 export const profitApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     /**
      * Get profit summary

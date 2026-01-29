@@ -5,7 +5,7 @@ import { formatCurrency, formatPercentage } from '@/utils/format'
 import { Button } from '@/design-system/buttons'
 import { Container } from '@/components/layout'
 import { PageHeader } from '@/components/layout'
-import { ProfitSummaryCard } from './'
+import { ProfitSummaryCard, FiltersPanel, ProfitTrendChart as DashboardProfitTrendChart, ProfitBreakdownTable } from './'
 import {
   useGetProfitSummaryQuery,
   useGetProfitByProductQuery,
@@ -41,6 +41,7 @@ import { setReturnFilters } from '@/store/profitReturns.slice'
 import { setChartFilters } from '@/store/profitCharts.slice'
 import { useGetAccountsQuery } from '@/services/api/accounts.api'
 import { COGSCard, COGSForm, COGSHistoricalTable } from '../cogs'
+import { KPICard, KPITable } from '../kpis'
 import {
   ExpenseSummaryCard,
   ExpenseTable,
@@ -51,6 +52,7 @@ import { ReturnsSummaryCard, ReturnsTable, ReturnsChart } from '../returns'
 import {
   FilterPanel as ChartsFilterPanel,
   ProfitTrendChart as AnalyticsProfitTrendChart,
+  ProfitTrendChart,
   SalesTrendChart,
   PPCCostChart,
   ReturnsTrendChart,
@@ -120,6 +122,8 @@ export const ProfitDashboard: React.FC = () => {
   const editingExpenseId = useAppSelector((state) => state.profitExpenses.editingExpenseId)
   const returnFilters = useAppSelector((state) => state.profitReturns.filters)
   const chartFilters = useAppSelector((state) => state.profitCharts.filters)
+
+  const [activeBreakdown, setActiveBreakdown] = useState<'product' | 'marketplace'>('product')
 
   // Fetch accounts for filter dropdown
   const { data: accountsData } = useGetAccountsQuery()
@@ -699,7 +703,7 @@ export const ProfitDashboard: React.FC = () => {
         </div>
 
         {/* Profit Trends Chart */}
-        <ProfitTrendChart
+        <DashboardProfitTrendChart
           data={trendsData}
           isLoading={trendsLoading}
           error={trendsError}
@@ -799,7 +803,7 @@ export const ProfitDashboard: React.FC = () => {
             {showCOGSForm && (
               <COGSForm
                 accountId={profitFilters.accountId || accountsData?.[0]?.id || ''}
-                sku={selectedSKU}
+                sku={selectedSKU || undefined}
                 marketplaceId={profitFilters.marketplaceId}
                 marketplaces={marketplaces}
                 onSubmit={handleCOGSSubmit}

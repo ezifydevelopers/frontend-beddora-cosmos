@@ -85,9 +85,9 @@ export const schedulingRulesApi = baseApi.injectEndpoints({
       { data: SchedulingRule[] },
       GetSchedulingRulesParams | void
     >({
-      query: (params = {}) => ({
+      query: (params) => ({
         url: '/scheduling-rules',
-        params,
+        ...(params && { params }),
       }),
       providesTags: ['EmailTemplates'],
     }),
@@ -151,9 +151,9 @@ export const schedulingRulesApi = baseApi.injectEndpoints({
       { data: SchedulingPreview[] },
       { accountId?: string; templateId?: string } | void
     >({
-      query: (params = {}) => ({
+      query: (params) => ({
         url: '/scheduling-rules/preview',
-        params,
+        ...(params && { params }),
       }),
     }),
   }),

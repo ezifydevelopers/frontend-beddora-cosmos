@@ -42,7 +42,7 @@ export const permissionsApi = baseApi.injectEndpoints({
     getMyPermissions: builder.query<UserPermissions, { accountId?: string } | void>({
       query: (params) => ({
         url: '/permissions/me',
-        params: params || {},
+        ...(params && { params }),
       }),
       providesTags: ['Permissions'],
     }),

@@ -73,7 +73,7 @@ export default function HomePage() {
 
             <div className="pt-4 space-y-4">
               <p className="text-center text-sm text-text-muted">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="/register" className="text-primary-600 font-medium hover:text-primary-700 transition-colors">
                   Start free trial
                 </Link>

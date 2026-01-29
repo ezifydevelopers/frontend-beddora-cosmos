@@ -145,7 +145,7 @@ export default function AmazonOAuthCallbackPage() {
                   </svg>
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900">Authorization Failed</h2>
-                <Alert variant="error" className="mt-4">
+                <Alert variant="danger" className="mt-4">
                   {message}
                 </Alert>
                 <div className="pt-4">

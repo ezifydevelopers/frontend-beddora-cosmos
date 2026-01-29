@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect } from 'react'
-import { useGetSyncLogsQuery } from '@/services/api/amazon.api'
+import { useGetSyncLogsQuery } from '@/services/api/sync.api'
 import { useGetAmazonAccountsQuery } from '@/services/api/accounts.api'
 import { Card } from '@/design-system/cards'
 import { Spinner } from '@/design-system/loaders'
@@ -23,7 +23,7 @@ import { Select } from '@/design-system/inputs'
 export const SyncLogsTable: React.FC = () => {
   const dispatch = useAppDispatch()
   const activeAccountId = useAppSelector((state) => state.accounts.activeAmazonAccountId)
-  const [selectedAccountId, setSelectedAccountId] = React.useState<string | undefined>(activeAccountId)
+  const [selectedAccountId, setSelectedAccountId] = React.useState<string | undefined>(activeAccountId || undefined)
   const [selectedSyncType, setSelectedSyncType] = React.useState<string>('')
 
   const { data: accounts } = useGetAmazonAccountsQuery()
@@ -35,8 +35,8 @@ export const SyncLogsTable: React.FC = () => {
 
   // Sync logs to Redux store
   useEffect(() => {
-    if (logs) {
-      dispatch(setSyncLogs(logs))
+    if (logs?.data) {
+      dispatch(setSyncLogs(logs.data))
     }
   }, [logs, dispatch])
 
@@ -49,11 +49,11 @@ export const SyncLogsTable: React.FC = () => {
       case 'success':
         return <Badge variant="success">Success</Badge>
       case 'failed':
-        return <Badge variant="danger">Failed</Badge>
+        return <Badge variant="error">Failed</Badge>
       case 'partial':
         return <Badge variant="warning">Partial</Badge>
       default:
-        return <Badge variant="info">{status}</Badge>
+        return <Badge variant="primary">{status}</Badge>
     }
   }
 
@@ -111,7 +111,7 @@ export const SyncLogsTable: React.FC = () => {
         </div>
       </div>
 
-      {!logs || logs.length === 0 ? (
+      {!logs?.data || logs.data.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
           No sync logs found.
         </div>
@@ -141,7 +141,7 @@ export const SyncLogsTable: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {logs.map((log) => {
+              {logs.data.map((log) => {
                 const duration = log.completedAt
                   ? Math.round(
                       (new Date(log.completedAt).getTime() - new Date(log.startedAt).getTime()) / 1000

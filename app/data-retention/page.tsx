@@ -169,7 +169,7 @@ export default function DataRetentionPage() {
                   <ol className="list-decimal pl-6 space-y-2">
                     <li>Log in to your Beddora account</li>
                     <li>Go to Settings → Amazon Accounts</li>
-                    <li>Click "Disconnect" next to your Amazon account</li>
+                    <li>Click &quot;Disconnect&quot; next to your Amazon account</li>
                     <li>Confirm the disconnection</li>
                   </ol>
 
@@ -177,7 +177,7 @@ export default function DataRetentionPage() {
                   <ol className="list-decimal pl-6 space-y-2">
                     <li>Log in to your Beddora account</li>
                     <li>Go to Settings → Account</li>
-                    <li>Click "Delete Account"</li>
+                    <li>Click &quot;Delete Account&quot;</li>
                     <li>Follow the confirmation steps</li>
                   </ol>
 
@@ -185,7 +185,7 @@ export default function DataRetentionPage() {
                   <p>Email us at <a href={`mailto:${SUPPORT_EMAILS.PRIVACY}`} className="text-blue-600 hover:underline font-semibold">{SUPPORT_EMAILS.PRIVACY}</a> with:</p>
                   <ul className="list-disc pl-6 space-y-1 mt-2">
                     <li>Your account email address</li>
-                    <li>Specific data you want deleted (or "all data")</li>
+                    <li>Specific data you want deleted (or &quot;all data&quot;)</li>
                     <li>Verification of your identity</li>
                   </ul>
                 </div>
@@ -203,7 +203,7 @@ export default function DataRetentionPage() {
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Changes to This Policy</h2>
                 <p>
                   We may update this Data Retention & Deletion Policy from time to time. We will notify you of any
-                  material changes by posting the updated policy on this page and updating the "Last updated" date.
+                  material changes by posting the updated policy on this page and updating the &quot;Last updated&quot; date.
                 </p>
               </section>
 

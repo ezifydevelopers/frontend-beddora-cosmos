@@ -134,7 +134,7 @@ export const ApproveRejectToolbar: React.FC<ApproveRejectToolbarProps> = ({
       </div>
       <div className="flex gap-2">
         <Button
-          variant="success"
+          variant="primary"
           size="sm"
           onClick={handleApprove}
           disabled={isApproving || isRejecting}

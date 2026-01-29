@@ -6,7 +6,7 @@ export const listingAlertsApi = baseApi.injectEndpoints({
     getListingAlerts: builder.query<ListingAlertsResponse, ListingAlertFilters | void>({
       query: (filters) => ({
         url: '/alerts/listing',
-        params: filters,
+        ...(filters && { params: filters }),
       }),
       providesTags: ['ListingAlerts'],
       keepUnusedDataFor: 30,

@@ -125,9 +125,9 @@ export default function SyncDashboardPage() {
       case 'completed':
         return <Badge variant="success">Completed</Badge>
       case 'failed':
-        return <Badge variant="danger">Failed</Badge>
+        return <Badge variant="error">Failed</Badge>
       case 'active':
-        return <Badge variant="info">Active</Badge>
+        return <Badge variant="primary">Active</Badge>
       case 'waiting':
         return <Badge variant="warning">Waiting</Badge>
       case 'delayed':
@@ -409,7 +409,7 @@ export default function SyncDashboardPage() {
                             {log.status === 'success' ? (
                               <Badge variant="success">Success</Badge>
                             ) : log.status === 'failed' ? (
-                              <Badge variant="danger">Failed</Badge>
+                              <Badge variant="error">Failed</Badge>
                             ) : (
                               <Badge variant="warning">Partial</Badge>
                             )}

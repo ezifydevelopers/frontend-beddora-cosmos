@@ -141,7 +141,7 @@ export const TrendsTable: React.FC<TrendsTableProps> = ({
   }
 
   if (isLoading) {
-    return <TableSkeleton numRows={5} numCols={10} />
+    return <TableSkeleton rows={5} columns={10} />
   }
 
   if (error) {
@@ -173,10 +173,10 @@ export const TrendsTable: React.FC<TrendsTableProps> = ({
       <Table className="table-fixed">
         <TableHeader>
           <TableRow>
-            <TableHead className="sticky left-0 bg-surface z-10 w-[250px]">Product</TableHead>
-            <TableHead className="w-[150px]">Chart</TableHead>
+            <TableHead className="sticky left-0 bg-surface z-10 w-[250px] whitespace-nowrap">Product</TableHead>
+            <TableHead className="w-[150px] whitespace-nowrap">Chart</TableHead>
             {data.dates.map((date) => (
-              <TableHead key={date} className="w-[120px] text-center">
+              <TableHead key={date} className="w-[120px] text-center whitespace-nowrap">
                 {formatDateDisplay(date)}
               </TableHead>
             ))}

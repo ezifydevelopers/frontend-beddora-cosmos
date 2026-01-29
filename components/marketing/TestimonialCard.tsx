@@ -26,7 +26,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
           </svg>
         ))}
       </div>
-      <p className="text-text-inverse text-base mb-4 italic leading-relaxed">"{quote}"</p>
+      <p className="text-text-inverse text-base mb-4 italic leading-relaxed">&quot;{quote}&quot;</p>
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-secondary-700 flex items-center justify-center text-text-inverse font-bold text-xs">
           {authorInitials || authorName.split(' ').map(n => n[0]).join('').toUpperCase()}

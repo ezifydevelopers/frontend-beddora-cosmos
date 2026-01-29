@@ -52,9 +52,9 @@ export interface UpdateCaseRequest {
 export const reimbursementCasesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCases: builder.query<{ data: ReimbursementCase[] }, CaseFilters | void>({
-      query: (params = {}) => ({
+      query: (params) => ({
         url: '/reimbursements/cases',
-        params,
+        ...(params && { params }),
       }),
       providesTags: ['ReimbursementCases'],
     }),

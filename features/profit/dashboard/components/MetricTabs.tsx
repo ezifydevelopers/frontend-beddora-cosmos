@@ -87,7 +87,7 @@ export const MetricTabs: React.FC<MetricTabsProps> = ({ value, onChange, classNa
       {metrics.map((metric) => (
         <Button
           key={metric}
-          variant={value === metric ? 'default' : 'ghost'}
+          variant={value === metric ? 'primary' : 'ghost'}
           onClick={() => onChange(metric)}
           size="sm"
           className={cn(

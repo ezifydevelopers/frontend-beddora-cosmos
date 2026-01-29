@@ -5,6 +5,7 @@
  */
 
 import { baseApi } from './baseApi'
+import type { SyncType } from '@/store/amazon.slice'
 
 // ============================================
 // TYPE DEFINITIONS
@@ -74,15 +75,16 @@ export interface SyncLog {
   id: string
   userId: string
   amazonAccountId: string
-  syncType: string
+  syncType: SyncType
   status: 'success' | 'failed' | 'partial'
   recordsSynced: number
   recordsFailed: number
-  errorMessage?: string | null
-  metadata?: any
+  errorMessage?: string
+  metadata?: Record<string, any>
   startedAt: string
-  completedAt?: string | null
+  completedAt?: string
   amazonAccount?: {
+    id: string
     marketplace: string
     sellerId: string
   }
@@ -153,7 +155,7 @@ export const syncApi = baseApi.injectEndpoints({
       providesTags: (result, error, { amazonAccountId }) => [
         { type: 'SyncStatus', id: `account-${amazonAccountId}` },
       ],
-      pollingInterval: 5000, // Poll every 5 seconds for active jobs
+      // Note: pollingInterval should be set when using the hook, not here
     }),
 
     /**
@@ -168,7 +170,6 @@ export const syncApi = baseApi.injectEndpoints({
         method: 'GET',
       }),
       providesTags: ['QueueStats'],
-      pollingInterval: 10000, // Poll every 10 seconds
     }),
 
     /**

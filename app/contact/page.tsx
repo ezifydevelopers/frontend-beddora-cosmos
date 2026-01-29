@@ -53,7 +53,7 @@ export default function ContactPage() {
             ← Back to Home
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Contact & Support</h1>
-          <p className="text-gray-600">We're here to help. Get in touch with our support team.</p>
+          <p className="text-gray-600">We&apos;re here to help. Get in touch with our support team.</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -119,7 +119,7 @@ export default function ContactPage() {
           <Card>
             <CardHeader>
               <CardTitle>Send us a Message</CardTitle>
-              <CardDescription>Fill out the form below and we'll get back to you as soon as possible</CardDescription>
+              <CardDescription>Fill out the form below and we&apos;ll get back to you as soon as possible</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -203,12 +203,12 @@ export default function ContactPage() {
 
                 {submitStatus === 'success' && (
                   <Alert variant="success">
-                    Thank you! Your message has been sent. We'll get back to you within 24 hours.
+                    Thank you! Your message has been sent. We&apos;ll get back to you within 24 hours.
                   </Alert>
                 )}
 
                 {submitStatus === 'error' && (
-                  <Alert variant="error">
+                  <Alert variant="danger">
                     There was an error sending your message. Please try again or email us directly.
                   </Alert>
                 )}
@@ -232,7 +232,7 @@ export default function ContactPage() {
                 <h3 className="font-semibold text-gray-900 mb-2">How do I disconnect my Amazon account?</h3>
                 <p className="text-gray-600">
                   You can disconnect your Amazon account at any time by going to Settings → Amazon Accounts and
-                  clicking "Disconnect". All associated data will be deleted within 7 days.
+                  clicking &quot;Disconnect&quot;. All associated data will be deleted within 7 days.
                 </p>
               </div>
 

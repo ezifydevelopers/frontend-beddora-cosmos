@@ -8,7 +8,7 @@ import { setFilters } from '@/store/profit.slice'
 import { useGetAccountsQuery } from '@/services/api/accounts.api'
 import { useGetProfitSummaryQuery, useGetProfitByProductQuery, ProfitFilters } from '@/services/api/profit.api'
 import { useGetUnitsSoldKPIQuery, useGetAdvertisingCostKPIQuery, KPIFilters } from '@/services/api/kpis.api'
-import { useGetProfitTrendQuery } from '@/services/api/charts.api'
+import { useGetProfitTrendQuery, ChartPeriod } from '@/services/api/charts.api'
 import { RevenueProfitTrendCard } from '../dashboard/RevenueProfitTrendCard'
 import { CostBreakdownChart } from '../dashboard/CostBreakdownChart'
 import { TopProductsTable } from '../dashboard/TopProductsTable'
@@ -19,7 +19,7 @@ export const ProfitAnalytics: React.FC = () => {
   const dispatch = useAppDispatch()
   const profitFilters = useAppSelector((state) => state.profit.filters)
   const { data: accountsData } = useGetAccountsQuery()
-  const [trendPeriod, setTrendPeriod] = useState<'day' | 'week' | 'month'>('month')
+  const [trendPeriod, setTrendPeriod] = useState<ChartPeriod>('month')
 
   useEffect(() => {
     if (!profitFilters.accountId && accountsData?.length) {
@@ -71,7 +71,7 @@ export const ProfitAnalytics: React.FC = () => {
     sku: profitFilters.sku,
     startDate: profitFilters.startDate,
     endDate: profitFilters.endDate,
-    period: trendPeriod,
+    period: (trendPeriod === 'year' || trendPeriod === 'quarter' ? 'month' : trendPeriod) as 'day' | 'week' | 'month' | 'hour' | 'custom' | undefined,
   }
 
   const { data: unitsSoldData } = useGetUnitsSoldKPIQuery(kpiQueryFilters, { skip: !effectiveAccountId })

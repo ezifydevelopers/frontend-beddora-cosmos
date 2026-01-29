@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Introduction</h2>
                 <p>
-                  Beddora ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains
+                  Beddora (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains
                   how we collect, use, disclose, and safeguard your information when you use our Amazon Selling Partner
                   API (SP-API) integration services.
                 </p>
@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
                   <li>Sync and process your Amazon seller data</li>
                   <li>Generate reports, analytics, and insights</li>
                   <li>Manage your account and provide customer support</li>
-                  <li>Comply with legal obligations and Amazon's requirements</li>
+                  <li>Comply with legal obligations and Amazon&apos;s requirements</li>
                   <li>Improve our services and develop new features</li>
                 </ul>
               </section>
@@ -159,7 +159,7 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Amazon SP-API Compliance</h2>
                 <p>
-                  Our use of Amazon SP-API data complies with Amazon's Selling Partner API Developer Guide and Data
+                  Our use of Amazon SP-API data complies with Amazon&apos;s Selling Partner API Developer Guide and Data
                   Protection Policy. We:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
@@ -180,7 +180,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Children's Privacy</h2>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Children&apos;s Privacy</h2>
                 <p>
                   Our services are not intended for individuals under 18 years of age. We do not knowingly collect
                   personal information from children.
@@ -199,7 +199,7 @@ export default function PrivacyPolicyPage() {
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">12. Changes to This Policy</h2>
                 <p>
                   We may update this Privacy Policy from time to time. We will notify you of any material changes by
-                  posting the new policy on this page and updating the "Last updated" date.
+                  posting the new policy on this page and updating the &quot;Last updated&quot; date.
                 </p>
               </section>
 

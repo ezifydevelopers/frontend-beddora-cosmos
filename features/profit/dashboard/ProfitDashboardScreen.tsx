@@ -906,7 +906,6 @@ export const ProfitDashboardScreen: React.FC = () => {
           accountId={effectiveAccountId}
           startDate={thirtyDaysRange.startDate}
           endDate={thirtyDaysRange.endDate}
-          interval="daily"
         />
       )}
 

@@ -24,7 +24,7 @@ export const CurrencyDisplay: React.FC<CurrencyDisplayProps> = ({
   const shouldConvert = originalCurrencyCode !== targetCurrency
 
   const { data } = useGetExchangeRateQuery(
-    shouldConvert ? { from: originalCurrencyCode, to: targetCurrency } : undefined,
+    shouldConvert ? { from: originalCurrencyCode, to: targetCurrency } : { from: originalCurrencyCode, to: originalCurrencyCode },
     { skip: !shouldConvert }
   )
 

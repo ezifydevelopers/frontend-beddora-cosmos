@@ -151,12 +151,23 @@ export const AmazonAccountAuthorization: React.FC<AmazonAccountAuthorizationProp
       </CardHeader>
       <CardContent className="pt-6 space-y-6">
         {error && (
-          <Alert variant="error" onClose={() => setError(null)} className="border-red-200 bg-red-50">
+          <Alert variant="danger" className="border-red-200 bg-red-50">
             <div className="flex items-start gap-3">
               <svg className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-sm text-red-800">{error}</p>
+              <div className="flex-1">
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+              <button
+                onClick={() => setError(null)}
+                className="text-red-600 hover:text-red-800 flex-shrink-0"
+                aria-label="Close"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
           </Alert>
         )}

@@ -43,35 +43,94 @@ export default function DashboardLayout({
             { label: 'Reports', href: '/dashboard/profit/reports' },
           ],
         },
-        { label: 'Inventory', href: '/dashboard/inventory', icon: NavIcons.inventory },
-        { label: 'Purchase Orders', href: '/dashboard/purchase-orders', icon: NavIcons.orders },
-        { label: 'PPC Campaigns', href: '/dashboard/ppc', icon: NavIcons.ppc },
-        { label: 'Orders', href: '/dashboard/orders', icon: NavIcons.orders },
-        { label: 'Products', href: '/dashboard/products', icon: NavIcons.products },
-      ],
-    },
-    {
-      title: 'Analytics',
-      items: [
-        { label: 'Sales Trends', href: '/dashboard/analytics/sales-trends', icon: NavIcons.analytics },
-        { label: 'Performance', href: '/dashboard/analytics/performance', icon: NavIcons.performance },
-        { label: 'Keyword Tracker', href: '/dashboard/analytics/keywords', icon: NavIcons.keyword },
-      ],
-    },
-    {
-      title: 'Tools',
-      items: [
-        { label: 'Alerts', href: '/dashboard/alerts', icon: NavIcons.alerts, badge: '3' },
-        { label: 'Reports', href: '/dashboard/reports', icon: NavIcons.reports },
-        { label: 'Export Data', href: '/dashboard/export', icon: NavIcons.export },
-        { label: 'Sync Dashboard', href: '/dashboard/sync', icon: NavIcons.reports },
-      ],
-    },
-    {
-      title: 'Account',
-      items: [
-        { label: 'Settings', href: '/dashboard/settings', icon: NavIcons.settings },
-        { label: 'Help Center', href: '/dashboard/help', icon: NavIcons.help },
+        {
+          label: 'PPC',
+          href: '/dashboard/ppc/dashboard',
+          icon: NavIcons.ppc,
+          children: [
+            { label: 'Dashboard', href: '/dashboard/ppc/dashboard' },
+            { label: 'Recommendations', href: '/dashboard/ppc/recommendations' },
+            { label: 'Automation Log', href: '/dashboard/ppc/automation-log' },
+          ],
+        },
+        { label: 'Repricer', href: '/dashboard/repricer', icon: NavIcons.products },
+        {
+          label: 'Inventory',
+          href: '/dashboard/inventory',
+          icon: NavIcons.inventory,
+          children: [
+            { label: 'Overview', href: '/dashboard/inventory' },
+            { label: 'Purchase Orders', href: '/dashboard/inventory/purchase-orders' },
+            { label: 'Products', href: '/dashboard/inventory/products' },
+          ],
+        },
+        {
+          label: 'Autoresponder',
+          href: '/dashboard/autoresponder',
+          icon: NavIcons.reports,
+          children: [
+            { label: 'Templates', href: '/dashboard/autoresponder/templates' },
+            { label: 'History', href: '/dashboard/autoresponder/history' },
+          ],
+        },
+        {
+          label: 'Money Back',
+          href: '/dashboard/money-back',
+          icon: NavIcons.reports,
+          children: [
+            { label: 'Claims', href: '/dashboard/money-back/claims' },
+            { label: 'History', href: '/dashboard/money-back/history' },
+          ],
+        },
+        {
+          label: 'Alerts',
+          href: '/dashboard/alerts',
+          icon: NavIcons.alerts,
+          badge: '3',
+          children: [
+            { label: 'Active', href: '/dashboard/alerts/active' },
+            { label: 'History', href: '/dashboard/alerts/history' },
+          ],
+        },
+        { label: 'Keyword Research', href: '/dashboard/keyword-research', icon: NavIcons.keyword },
+        {
+          label: 'eBay',
+          href: '/dashboard/ebay',
+          icon: NavIcons.products,
+          children: [
+            { label: 'Listings', href: '/dashboard/ebay/listings' },
+            { label: 'Orders', href: '/dashboard/ebay/orders' },
+          ],
+        },
+        {
+          label: 'Walmart',
+          href: '/dashboard/walmart',
+          icon: NavIcons.products,
+          children: [
+            { label: 'Listings', href: '/dashboard/walmart/listings' },
+            { label: 'Orders', href: '/dashboard/walmart/orders' },
+          ],
+        },
+        { label: 'Shopify', href: '/dashboard/shopify', icon: NavIcons.products },
+        {
+          label: 'QuickBooks',
+          href: '/dashboard/quickbooks',
+          icon: NavIcons.reports,
+          children: [
+            { label: 'Sync', href: '/dashboard/quickbooks/sync' },
+            { label: 'Settings', href: '/dashboard/quickbooks/settings' },
+          ],
+        },
+        {
+          label: 'Settings',
+          href: '/dashboard/settings',
+          icon: NavIcons.settings,
+          children: [
+            { label: 'Account', href: '/dashboard/settings/account' },
+            { label: 'Integrations', href: '/dashboard/settings/integrations' },
+            { label: 'Billing', href: '/dashboard/settings/billing' },
+          ],
+        },
       ],
     },
   ], [])

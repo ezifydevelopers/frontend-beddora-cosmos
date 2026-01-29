@@ -171,7 +171,7 @@ export const cogsApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: COGSApiResponse<COGSResponse>) => response.data,
       invalidatesTags: (result) => [
-        { type: 'Profit', id: `COGS-${result.sku}` },
+        ...(result ? [{ type: 'Profit' as const, id: `COGS-${result.sku}` }] : []),
         'Profit',
       ],
     }),

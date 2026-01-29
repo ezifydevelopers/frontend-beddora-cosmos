@@ -157,7 +157,7 @@ export const AccountsList: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Badge variant="info" className="px-3 py-1.5 font-semibold">
+            <Badge variant="primary" className="px-3 py-1.5 font-semibold">
               {accounts.length} {accounts.length === 1 ? 'Account' : 'Accounts'}
             </Badge>
             <Button

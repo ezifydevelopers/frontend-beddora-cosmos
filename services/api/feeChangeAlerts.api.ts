@@ -6,7 +6,7 @@ export const feeChangeAlertsApi = baseApi.injectEndpoints({
     getFeeChangeAlerts: builder.query<FeeChangeAlertsResponse, FeeChangeAlertFilters | void>({
       query: (filters) => ({
         url: '/alerts/fees',
-        params: filters,
+        ...(filters && { params: filters }),
       }),
       providesTags: ['FeeChangeAlerts'],
       keepUnusedDataFor: 30,

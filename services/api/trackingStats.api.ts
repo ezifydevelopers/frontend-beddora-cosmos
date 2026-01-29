@@ -141,9 +141,9 @@ export const trackingStatsApi = baseApi.injectEndpoints({
      * Get email interaction statistics
      */
     getEmailStats: builder.query<{ data: EmailStatsResponse }, EmailStatsFilters | void>({
-      query: (params = {}) => ({
+      query: (params) => ({
         url: '/tracking/email',
-        params,
+        ...(params && { params }),
       }),
       providesTags: ['EmailStats'],
     }),
@@ -183,9 +183,9 @@ export const trackingStatsApi = baseApi.injectEndpoints({
      * Get review generation statistics
      */
     getReviewStats: builder.query<{ data: ReviewStatsResponse }, ReviewStatsFilters | void>({
-      query: (params = {}) => ({
+      query: (params) => ({
         url: '/tracking/review',
-        params,
+        ...(params && { params }),
       }),
       providesTags: ['EmailStats'],
     }),

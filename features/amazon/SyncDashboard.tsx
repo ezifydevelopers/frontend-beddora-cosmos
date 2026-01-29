@@ -1,14 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import {
-  useSyncOrdersMutation,
-  useSyncFeesMutation,
-  useSyncPPCMutation,
-  useSyncInventoryMutation,
-  useSyncListingsMutation,
-  useSyncRefundsMutation,
-} from '@/services/api/amazon.api'
+import { useTriggerSyncMutation } from '@/services/api/sync.api'
 import { useGetAmazonAccountsQuery } from '@/services/api/accounts.api'
 import { Button } from '@/design-system/buttons'
 import { Card } from '@/design-system/cards'
@@ -74,7 +67,7 @@ const SyncButton: React.FC<SyncButtonProps> = ({
           </span>
         )}
         {error && (
-          <Badge variant="danger" className="text-xs">
+          <Badge variant="error" className="text-xs">
             Error
           </Badge>
         )}
@@ -93,13 +86,8 @@ export const SyncDashboard: React.FC = () => {
   const syncStatus = useAppSelector((state) => state.amazon.syncStatus)
   const activeSyncs = useAppSelector((state) => state.amazon.activeSyncs)
 
-  // Mutations
-  const [syncOrders] = useSyncOrdersMutation()
-  const [syncFees] = useSyncFeesMutation()
-  const [syncPPC] = useSyncPPCMutation()
-  const [syncInventory] = useSyncInventoryMutation()
-  const [syncListings] = useSyncListingsMutation()
-  const [syncRefunds] = useSyncRefundsMutation()
+  // Mutation
+  const [triggerSync] = useTriggerSyncMutation()
 
   /**
    * Handle sync operation
@@ -114,43 +102,22 @@ export const SyncDashboard: React.FC = () => {
       dispatch(setActiveSync({ accountId, type }))
       dispatch(setSyncStatus({ type, isSyncing: true, error: undefined }))
 
-      let result
-      const syncRequest = { amazonAccountId: accountId }
-
-      switch (type) {
-        case 'orders':
-          result = await syncOrders(syncRequest).unwrap()
-          break
-        case 'fees':
-          result = await syncFees(syncRequest).unwrap()
-          break
-        case 'ppc':
-          result = await syncPPC(syncRequest).unwrap()
-          break
-        case 'inventory':
-          result = await syncInventory(syncRequest).unwrap()
-          break
-        case 'listings':
-          result = await syncListings(syncRequest).unwrap()
-          break
-        case 'refunds':
-          result = await syncRefunds(syncRequest).unwrap()
-          break
-      }
+      const result = await triggerSync({
+        amazonAccountId: accountId,
+        syncType: type,
+      }).unwrap()
 
       dispatch(
         setSyncStatus({
           type,
           isSyncing: false,
           lastSync: new Date().toISOString(),
-          error: result.data.recordsFailed > 0 ? `${result.data.recordsFailed} records failed` : undefined,
+          error: undefined,
         })
       )
       dispatch(setActiveSync({ accountId, type: null }))
 
-      if (result.data.recordsSynced > 0) {
-        alert(`Sync completed! ${result.data.recordsSynced} records synced.`)
-      }
+      alert(`Sync job started! Job ID: ${result.data.jobId}`)
     } catch (error: any) {
       const errorMessage = error?.data?.error || error?.message || 'Sync failed'
       dispatch(

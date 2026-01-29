@@ -163,12 +163,12 @@ export const StagingTable: React.FC<StagingTableProps> = ({
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex flex-col gap-1">
                       <Badge
-                        variant={row.validated ? 'success' : 'danger'}
+                        variant={row.validated ? 'success' : 'error'}
                         className="text-xs"
                       >
                         {row.validated ? 'Valid' : 'Invalid'}
                       </Badge>
-                      <Badge variant="info" className="text-xs">
+                      <Badge variant="primary" className="text-xs">
                         {row.status}
                       </Badge>
                     </div>

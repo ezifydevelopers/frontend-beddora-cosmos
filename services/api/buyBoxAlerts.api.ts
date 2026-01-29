@@ -6,7 +6,7 @@ export const buyBoxAlertsApi = baseApi.injectEndpoints({
     getBuyBoxAlerts: builder.query<BuyBoxAlertsResponse, BuyBoxAlertFilters | void>({
       query: (filters) => ({
         url: '/alerts/buy-box',
-        params: filters,
+        ...(filters && { params: filters }),
       }),
       providesTags: ['BuyBoxAlerts'],
       keepUnusedDataFor: 30,

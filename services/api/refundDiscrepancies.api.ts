@@ -72,9 +72,9 @@ export const refundDiscrepanciesApi = baseApi.injectEndpoints({
       { data: RefundDiscrepancyResponse },
       RefundDiscrepancyFilters | void
     >({
-      query: (params = {}) => ({
+      query: (params) => ({
         url: '/reimbursements/refund-discrepancies',
-        params,
+        ...(params && { params }),
       }),
       providesTags: ['RefundDiscrepancies'],
     }),

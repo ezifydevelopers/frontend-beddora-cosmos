@@ -87,9 +87,9 @@ export const fbaInventoryApi = baseApi.injectEndpoints({
       { data: FbaInventoryAlertResponse },
       FbaInventoryAlertFilters | void
     >({
-      query: (params = {}) => ({
+      query: (params) => ({
         url: '/reimbursements/fba',
-        params,
+        ...(params && { params }),
       }),
       providesTags: ['Alerts'],
     }),

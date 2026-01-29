@@ -30,6 +30,7 @@ import refundDiscrepanciesReducer from './refundDiscrepancies.slice'
 import reimbursementCasesReducer from './reimbursementCases.slice'
 import marketplacesReducer from './marketplaces.slice'
 import currenciesReducer from './currencies.slice'
+import amazonReducer from './amazon.slice'
 
 /**
  * Redux store configuration
@@ -76,6 +77,7 @@ export const store = configureStore({
     reimbursementCases: reimbursementCasesReducer,
     marketplaces: marketplacesReducer,
     currencies: currenciesReducer,
+    amazon: amazonReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(baseApi.middleware),

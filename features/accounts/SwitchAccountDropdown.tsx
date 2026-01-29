@@ -125,10 +125,13 @@ export const SwitchAccountDropdown: React.FC<SwitchAccountDropdownProps> = ({
   }
 
   // Build options for dropdown
-  const options = activeAccounts.map((account) => ({
-    label: `${account.marketplace} - ${account.sellerId}`,
-    value: account.id,
-  }))
+  const options = [
+    ...(!activeAmazonAccountId ? [{ label: placeholder, value: '' }] : []),
+    ...activeAccounts.map((account) => ({
+      label: `${account.marketplace} - ${account.sellerId}`,
+      value: account.id,
+    })),
+  ]
 
   return (
     <div className={className}>
@@ -137,7 +140,6 @@ export const SwitchAccountDropdown: React.FC<SwitchAccountDropdownProps> = ({
         value={activeAmazonAccountId || ''}
         onChange={(e) => handleChange(e.target.value)}
         options={options}
-        placeholder={placeholder}
         disabled={isSwitching || activeAccounts.length === 1}
       />
       {isSwitching && (

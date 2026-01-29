@@ -6,7 +6,7 @@ export const feedbackAlertsApi = baseApi.injectEndpoints({
     getFeedbackAlerts: builder.query<FeedbackAlertsResponse, FeedbackAlertFilters | void>({
       query: (filters) => ({
         url: '/alerts/feedback',
-        params: filters,
+        ...(filters && { params: filters }),
       }),
       providesTags: ['FeedbackAlerts'],
       keepUnusedDataFor: 30,

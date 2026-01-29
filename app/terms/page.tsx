@@ -34,8 +34,8 @@ export default function TermsOfServicePage() {
               <section>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Acceptance of Terms</h2>
                 <p>
-                  By accessing or using Beddora's services, including our Amazon Selling Partner API (SP-API)
-                  integration, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these
+                  By accessing or using Beddora&apos;s services, including our Amazon Selling Partner API (SP-API)
+                  integration, you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to these
                   Terms, you may not use our services.
                 </p>
               </section>
@@ -43,7 +43,7 @@ export default function TermsOfServicePage() {
               <section>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Description of Service</h2>
                 <p>
-                  Beddora provides a SaaS platform that integrates with Amazon's Selling Partner API to help sellers
+                  Beddora provides a SaaS platform that integrates with Amazon&apos;s Selling Partner API to help sellers
                   manage their Amazon business operations, including:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
@@ -59,7 +59,7 @@ export default function TermsOfServicePage() {
               <section>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Amazon SP-API Terms</h2>
                 <p>
-                  Your use of our Amazon SP-API integration is subject to Amazon's Selling Partner API Developer Guide
+                  Your use of our Amazon SP-API integration is subject to Amazon&apos;s Selling Partner API Developer Guide
                   and Data Protection Policy. By using our service, you acknowledge that:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
@@ -133,7 +133,7 @@ export default function TermsOfServicePage() {
                 <p>
                   Some features of our service may require payment. By subscribing to paid features, you agree to pay
                   the fees specified at the time of purchase. Fees are non-refundable unless otherwise stated. We
-                  reserve the right to change our pricing with 30 days' notice.
+                  reserve the right to change our pricing with 30 days&apos; notice.
                 </p>
               </section>
 
@@ -155,7 +155,7 @@ export default function TermsOfServicePage() {
               <section>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">11. Disclaimers</h2>
                 <p>
-                  Our services are provided "as is" and "as available" without warranties of any kind, either express
+                  Our services are provided &quot;as is&quot; and &quot;as available&quot; without warranties of any kind, either express
                   or implied. We do not guarantee that our services will be error-free, uninterrupted, or secure. We
                   are not responsible for any losses or damages resulting from your use of our services.
                 </p>
@@ -191,7 +191,7 @@ export default function TermsOfServicePage() {
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">15. Changes to Terms</h2>
                 <p>
                   We reserve the right to modify these Terms at any time. We will notify you of any material changes by
-                  posting the updated Terms on this page and updating the "Last updated" date. Your continued use of
+                  posting the updated Terms on this page and updating the &quot;Last updated&quot; date. Your continued use of
                   our services after such changes constitutes acceptance of the new Terms.
                 </p>
               </section>
