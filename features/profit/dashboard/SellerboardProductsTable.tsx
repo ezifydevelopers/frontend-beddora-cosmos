@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useCallback } from 'react'
 import {
   Table,
   TableBody,
@@ -42,7 +42,7 @@ type SortDirection = 'asc' | 'desc'
  * 
  * Comprehensive product table with all financial metrics
  */
-export const SellerboardProductsTable: React.FC<SellerboardProductsTableProps> = ({
+export const SellerboardProductsTable: React.FC<SellerboardProductsTableProps> = React.memo(({
   products,
   isLoading,
   searchTerm = '',
@@ -53,14 +53,14 @@ export const SellerboardProductsTable: React.FC<SellerboardProductsTableProps> =
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 20
 
-  const handleSort = (column: SortColumn) => {
+  const handleSort = useCallback((column: SortColumn) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
     } else {
       setSortColumn(column)
       setSortDirection('desc')
     }
-  }
+  }, [sortColumn, sortDirection])
 
   const filteredAndSortedProducts = useMemo(() => {
     if (!products) return []
@@ -440,5 +440,5 @@ export const SellerboardProductsTable: React.FC<SellerboardProductsTableProps> =
       )}
     </div>
   )
-}
+})
 

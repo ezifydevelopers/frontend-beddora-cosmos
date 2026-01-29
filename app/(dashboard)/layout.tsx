@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, Suspense } from 'react'
 import { Sidebar, Header, ProtectedRoute } from '@/components/navigation'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { clearCredentials } from '@/store/auth.slice'
@@ -137,17 +137,16 @@ export default function DashboardLayout({
 
   const [marketplaceValue, setMarketplaceValue] = useState('amazon-us')
   const [periodValue, setPeriodValue] = useState('last-30-days')
+  const [activeDashboardTab, setActiveDashboardTabState] = useState('tiles')
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  
-  // Get active tab from URL or default to 'tiles'
-  const activeDashboardTab = searchParams?.get('tab') || 'tiles'
-  
+
+  // Wrapper for setActiveDashboardTab that updates both state and URL
   const setActiveDashboardTab = React.useCallback((tabId: string) => {
-    const params = new URLSearchParams(searchParams?.toString() || '')
+    setActiveDashboardTabState(tabId)
+    const params = new URLSearchParams(window.location.search)
     params.set('tab', tabId)
     router.replace(`${pathname}?${params.toString()}`)
-  }, [pathname, router, searchParams])
+  }, [pathname, router])
 
   const marketplaceOptions = [
     { value: 'amazon-us', label: 'Amazon US' },
@@ -274,6 +273,14 @@ export default function DashboardLayout({
           }}
         />
         <div className="ds-main">
+          {/* Suspense-wrapped component to read search params without blocking layout */}
+          {isProfitDashboard && (
+            <Suspense fallback={null}>
+              <DashboardTabSync
+                onTabChange={setActiveDashboardTabState}
+              />
+            </Suspense>
+          )}
           <Header
             user={user || undefined}
             onLogout={handleLogout}
@@ -293,5 +300,17 @@ export default function DashboardLayout({
       </div>
     </ProtectedRoute>
   )
+}
+
+// Separate component to read search params (wrapped in Suspense)
+function DashboardTabSync({ onTabChange }: { onTabChange: (tab: string) => void }) {
+  const searchParams = useSearchParams()
+  const tab = searchParams?.get('tab') || 'tiles'
+  
+  React.useEffect(() => {
+    onTabChange(tab)
+  }, [tab, onTabChange])
+  
+  return null
 }
 

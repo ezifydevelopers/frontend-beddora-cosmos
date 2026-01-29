@@ -266,8 +266,8 @@ export const profitApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: ProfitSummaryResponse) => response.data,
       providesTags: ['Profit'],
-      // Cache for 30 seconds to reduce load while allowing real-time updates
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - summary data changes less frequently
+      keepUnusedDataFor: 120,
     }),
 
     /**
@@ -281,7 +281,8 @@ export const profitApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: ProductBreakdownResponse) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 180 seconds - product breakdown data is relatively stable
+      keepUnusedDataFor: 180,
     }),
 
     /**
@@ -295,7 +296,8 @@ export const profitApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: MarketplaceBreakdownResponse) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 180 seconds - marketplace breakdown data is relatively stable
+      keepUnusedDataFor: 180,
     }),
 
     /**
@@ -309,7 +311,8 @@ export const profitApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: ProfitTrendsApiResponse) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 300 seconds - trend data is historical and changes less frequently
+      keepUnusedDataFor: 300,
     }),
 
     /**
@@ -323,7 +326,8 @@ export const profitApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: OrderItemsBreakdownResponse) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - order items can change more frequently
+      keepUnusedDataFor: 120,
     }),
 
     /**
@@ -337,7 +341,8 @@ export const profitApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: PLResponseApi) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 300 seconds - P&L data is historical and changes less frequently
+      keepUnusedDataFor: 300,
     }),
 
     /**
@@ -355,7 +360,8 @@ export const profitApi = baseApi.injectEndpoints({
         },
       }),
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 300 seconds - map data is historical
+      keepUnusedDataFor: 300,
     }),
 
     /**
@@ -377,7 +383,8 @@ export const profitApi = baseApi.injectEndpoints({
         },
       }),
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 300 seconds - trend data is historical
+      keepUnusedDataFor: 300,
     }),
 
     /**
@@ -399,7 +406,32 @@ export const profitApi = baseApi.injectEndpoints({
         },
       }),
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 300 seconds - product trends are historical
+      keepUnusedDataFor: 300,
+    }),
+
+    /**
+     * Get profit summary for multiple periods in one request
+     * Optimized endpoint to reduce API calls
+     * Returns object with period keys (today, yesterday, 7days, 14days, 30days)
+     */
+    getProfitSummaryMultiplePeriods: builder.query<
+      Record<string, ProfitSummary>,
+      Omit<ProfitFilters, 'startDate' | 'endDate'> & { periods?: string }
+    >({
+      query: (filters) => ({
+        url: '/profit/summary/multiple-periods',
+        params: {
+          accountId: filters.accountId,
+          amazonAccountId: filters.amazonAccountId,
+          marketplaceId: filters.marketplaceId,
+          periods: filters.periods || 'today,yesterday,7days,14days,30days',
+        },
+      }),
+      transformResponse: (response: { success: boolean; data: Record<string, ProfitSummary> }) => response.data,
+      providesTags: ['Profit'],
+      // Cache for 120 seconds - summary data changes less frequently
+      keepUnusedDataFor: 120,
     }),
   }),
 })
@@ -428,4 +460,6 @@ export const {
   useLazyGetProfitByCountryQuery,
   useLazyGetProfitTrendsSimpleQuery,
   useLazyGetProductTrendsQuery,
+  useGetProfitSummaryMultiplePeriodsQuery,
+  useLazyGetProfitSummaryMultiplePeriodsQuery,
 } = profitApi

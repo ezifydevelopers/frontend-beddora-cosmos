@@ -1,11 +1,25 @@
 "use client"
 
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { Card, CardContent, CardHeader, CardTitle } from '@/design-system/cards'
-import { LineChart, ChartPalette } from '@/design-system/charts'
+import { ChartPalette } from '@/design-system/charts'
 import { Tabs } from '@/design-system/tabs'
-import { Spinner } from '@/design-system/loaders'
+import { Spinner, ChartSkeleton } from '@/design-system/loaders'
 import { ChartResponse, ChartPeriod } from '@/services/api/charts.api'
+
+// Lazy-load the heavy LineChart component (includes Recharts)
+const LineChart = dynamic(
+  () => import('@/design-system/charts/LineChart').then((mod) => mod.LineChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex items-center justify-center">
+        <ChartSkeleton height="300px" />
+      </div>
+    ),
+  }
+)
 
 export interface RevenueProfitTrendCardProps {
   data?: ChartResponse

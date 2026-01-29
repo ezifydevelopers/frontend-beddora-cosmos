@@ -81,6 +81,9 @@ export const baseApi = createApi({
     },
   }),
   tagTypes,
+  // Default cache time: 60 seconds (can be overridden per endpoint)
+  // This ensures data is reused across navigations instead of refetching too often
+  keepUnusedDataFor: 60,
   endpoints: () => ({}),
 })
 

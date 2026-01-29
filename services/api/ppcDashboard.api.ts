@@ -16,7 +16,8 @@ export const ppcDashboardApi = baseApi.injectEndpoints({
         params: filters,
       }),
       providesTags: ['PPC'],
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - PPC data can change more frequently but still benefits from caching
+      keepUnusedDataFor: 120,
       transformResponse: (response: { success: boolean; data: PPCOverview }) => response.data,
     }),
     getCampaigns: builder.query<PPCListResponse<PPCCampaign>, PPCDashboardFilters>({
@@ -25,7 +26,8 @@ export const ppcDashboardApi = baseApi.injectEndpoints({
         params: filters,
       }),
       providesTags: ['PPC'],
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - PPC data can change more frequently but still benefits from caching
+      keepUnusedDataFor: 120,
       transformResponse: (response: { success: boolean; data: PPCListResponse<PPCCampaign> }) =>
         response.data,
     }),
@@ -35,7 +37,8 @@ export const ppcDashboardApi = baseApi.injectEndpoints({
         params: filters,
       }),
       providesTags: ['PPC'],
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - PPC data can change more frequently but still benefits from caching
+      keepUnusedDataFor: 120,
       transformResponse: (response: { success: boolean; data: PPCListResponse<PPCAdGroup> }) =>
         response.data,
     }),
@@ -45,7 +48,8 @@ export const ppcDashboardApi = baseApi.injectEndpoints({
         params: filters,
       }),
       providesTags: ['PPC'],
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - PPC data can change more frequently but still benefits from caching
+      keepUnusedDataFor: 120,
       transformResponse: (response: { success: boolean; data: PPCListResponse<PPCKeyword> }) =>
         response.data,
     }),

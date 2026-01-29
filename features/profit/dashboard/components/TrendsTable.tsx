@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
+import dynamic from 'next/dynamic'
 import {
   Table,
   TableBody,
@@ -9,11 +10,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/design-system/tables'
-import { TableSkeleton } from '@/design-system/loaders'
-import { LineChart } from '@/design-system/charts'
+import { TableSkeleton, ChartSkeleton } from '@/design-system/loaders'
 import { ProductTrendsResponse } from '@/services/api/profit.api'
 import { formatCurrency, formatNumber, formatPercentage } from '@/utils/format'
 import { cn } from '@/utils/cn'
+
+// Lazy-load the heavy LineChart component (includes Recharts)
+const LineChart = dynamic(
+  () => import('@/design-system/charts/LineChart').then((mod) => mod.LineChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-16 flex items-center justify-center">
+        <ChartSkeleton height="60px" />
+      </div>
+    ),
+  }
+)
 
 /**
  * TrendsTable Component

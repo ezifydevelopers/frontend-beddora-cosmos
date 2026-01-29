@@ -6,6 +6,7 @@ import { Input, Select } from '@/design-system/inputs'
 import { Button } from '@/design-system/buttons'
 import { Card, CardContent } from '@/design-system/cards'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/design-system/tables'
+import { useDebounce } from '@/utils/debounce'
 
 // Lazy load chart component
 const PPCChart = dynamic(() => import('./PPCChart'), {
@@ -42,6 +43,8 @@ interface KeywordData {
 export const PPCDashboardEnhanced = React.memo(() => {
   const [activeTab, setActiveTab] = useState<PPCTab>('keywords')
   const [searchTerm, setSearchTerm] = useState('')
+  // Debounce search term to avoid excessive filtering (300ms delay)
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const [campaignFilter, setCampaignFilter] = useState('all')
   const [periodFilter, setPeriodFilter] = useState('last_3_months_week')
   const [statusFilter, setStatusFilter] = useState('all')

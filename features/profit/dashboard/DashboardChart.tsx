@@ -1,11 +1,24 @@
 'use client'
 
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { Card, CardContent, CardHeader, CardTitle } from '@/design-system/cards'
-import { CombinationChart } from '@/design-system/charts/CombinationChart'
-import { Spinner } from '@/design-system/loaders'
+import { Spinner, ChartSkeleton } from '@/design-system/loaders'
 import { DashboardChartResponse } from '@/services/api/charts.api'
 import { formatCurrency, formatNumber } from '@/utils/format'
+
+// Lazy-load the heavy CombinationChart component (includes Recharts)
+const CombinationChart = dynamic(
+  () => import('@/design-system/charts/CombinationChart').then((mod) => mod.CombinationChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex items-center justify-center">
+        <ChartSkeleton height="400px" />
+      </div>
+    ),
+  }
+)
 
 export interface DashboardChartProps {
   data?: DashboardChartResponse

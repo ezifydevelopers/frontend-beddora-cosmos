@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useCallback } from 'react'
 import {
   Table,
   TableBody,
@@ -51,14 +51,14 @@ export const OrderItemsTable: React.FC<OrderItemsTableProps> = ({
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 20
 
-  const handleSort = (column: SortColumn) => {
+  const handleSort = useCallback((column: SortColumn) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
     } else {
       setSortColumn(column)
       setSortDirection('desc')
     }
-  }
+  }, [sortColumn, sortDirection])
 
   const filteredAndSortedItems = useMemo(() => {
     if (!orderItems) return []

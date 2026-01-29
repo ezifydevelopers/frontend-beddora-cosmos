@@ -1,11 +1,25 @@
 "use client"
 
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { Card, CardContent, CardHeader, CardTitle } from '@/design-system/cards'
-import { PieChart, ChartPalette } from '@/design-system/charts'
+import { ChartPalette } from '@/design-system/charts'
 import { ProfitSummary } from '@/services/api/profit.api'
 import { AdvertisingCostKPI } from '@/services/api/kpis.api'
-import { Spinner } from '@/design-system/loaders'
+import { Spinner, ChartSkeleton } from '@/design-system/loaders'
+
+// Lazy-load the heavy PieChart component (includes Recharts)
+const PieChart = dynamic(
+  () => import('@/design-system/charts/PieChart').then((mod) => mod.PieChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex items-center justify-center">
+        <ChartSkeleton height="300px" />
+      </div>
+    ),
+  }
+)
 
 export interface CostBreakdownChartProps {
   summary?: ProfitSummary

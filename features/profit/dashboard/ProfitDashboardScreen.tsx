@@ -11,6 +11,7 @@ import { KpiCardSkeleton } from '@/design-system/loaders'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setFilters } from '@/store/profit.slice'
 import { useGetAccountsQuery } from '@/services/api/accounts.api'
+import { useDebounce } from '@/utils/debounce'
 import {
   useGetProfitSummaryQuery,
   useGetProfitByProductQuery,
@@ -104,8 +105,12 @@ export const ProfitDashboardScreen: React.FC = () => {
   
   const [tableView, setTableView] = useState<TableView>('products')
   const [searchTerm, setSearchTerm] = useState('')
+  // Debounce search term to avoid excessive filtering/API calls (300ms delay)
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('yesterday')
   const [selectedPeriodForDetails, setSelectedPeriodForDetails] = useState<TimePeriod | null>(null)
+  // Track which periods have been requested (for lazy loading)
+  const [requestedPeriods, setRequestedPeriods] = useState<Set<TimePeriod>>(new Set(['yesterday']))
 
   useEffect(() => {
     if (!profitFilters.accountId && accountsData?.length) {
@@ -113,38 +118,52 @@ export const ProfitDashboardScreen: React.FC = () => {
     }
   }, [accountsData, dispatch, profitFilters])
 
+  // Request periods when tabs that need them become active
+  useEffect(() => {
+    if (activeTab === 'chart') {
+      // Chart tab uses 30days data for summary table
+      setRequestedPeriods((prev) => new Set([...prev, '30days']))
+    }
+  }, [activeTab])
+
   const effectiveAccountId = profitFilters.accountId || accountsData?.[0]?.id
 
-  // Fetch data for each time period
+  // Date ranges for each period (computed once)
   const todayRange = getDateRange(0)
   const yesterdayRange = getDateRange(1)
   const sevenDaysRange = getDateRange(7)
   const fourteenDaysRange = getDateRange(14)
   const thirtyDaysRange = getDateRange(30)
 
+  // Helper to mark a period as requested when user interacts with it
+  const requestPeriod = (period: TimePeriod) => {
+    setRequestedPeriods((prev) => new Set([...prev, period]))
+  }
+
+  // Only fetch periods that have been requested (lazy loading)
   const { data: todayData, isLoading: todayLoading } = useGetProfitSummaryQuery(
     { ...profitFilters, accountId: effectiveAccountId, ...todayRange },
-    { skip: !effectiveAccountId }
+    { skip: !effectiveAccountId || !requestedPeriods.has('today') }
   )
 
   const { data: yesterdayData, isLoading: yesterdayLoading } = useGetProfitSummaryQuery(
     { ...profitFilters, accountId: effectiveAccountId, ...yesterdayRange },
-    { skip: !effectiveAccountId }
+    { skip: !effectiveAccountId || !requestedPeriods.has('yesterday') }
   )
 
   const { data: sevenDaysData, isLoading: sevenDaysLoading } = useGetProfitSummaryQuery(
     { ...profitFilters, accountId: effectiveAccountId, ...sevenDaysRange },
-    { skip: !effectiveAccountId }
+    { skip: !effectiveAccountId || !requestedPeriods.has('7days') }
   )
 
   const { data: fourteenDaysData, isLoading: fourteenDaysLoading } = useGetProfitSummaryQuery(
     { ...profitFilters, accountId: effectiveAccountId, ...fourteenDaysRange },
-    { skip: !effectiveAccountId }
+    { skip: !effectiveAccountId || !requestedPeriods.has('14days') }
   )
 
   const { data: thirtyDaysData, isLoading: thirtyDaysLoading } = useGetProfitSummaryQuery(
     { ...profitFilters, accountId: effectiveAccountId, ...thirtyDaysRange },
-    { skip: !effectiveAccountId }
+    { skip: !effectiveAccountId || !requestedPeriods.has('30days') }
   )
 
   // Get products for selected period
@@ -420,13 +439,13 @@ export const ProfitDashboardScreen: React.FC = () => {
                   <SellerboardProductsTable
                     products={productData}
                     isLoading={productLoading}
-                    searchTerm={searchTerm}
+                    searchTerm={debouncedSearchTerm}
                   />
                 ) : (
                   <OrderItemsTable
                     orderItems={orderItemsData}
                     isLoading={orderItemsLoading}
-                    searchTerm={searchTerm}
+                    searchTerm={debouncedSearchTerm}
                   />
                 )}
               </div>
@@ -500,7 +519,11 @@ export const ProfitDashboardScreen: React.FC = () => {
                 <div className="min-w-[140px]">
                   <Select
                     value={selectedPeriod}
-                    onChange={(e) => setSelectedPeriod(e.target.value as TimePeriod)}
+                    onChange={(e) => {
+                      const newPeriod = e.target.value as TimePeriod
+                      requestPeriod(newPeriod) // Request data when period changes
+                      setSelectedPeriod(newPeriod)
+                    }}
                     options={timePeriods.map((p) => ({ value: p.id, label: p.label }))}
                   />
                 </div>
@@ -547,7 +570,10 @@ export const ProfitDashboardScreen: React.FC = () => {
               className={`bg-surface border border-border cursor-pointer transition-shadow hover:shadow-md ${
                 selectedPeriod === period.id ? 'ring-2 ring-primary-200' : ''
               }`}
-              onClick={() => setSelectedPeriod(period.id)}
+              onClick={() => {
+                requestPeriod(period.id) // Request data when user clicks
+                setSelectedPeriod(period.id)
+              }}
             >
               <CardContent className="p-4">
                 <div className="space-y-3">
@@ -610,6 +636,7 @@ export const ProfitDashboardScreen: React.FC = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
+                        requestPeriod(period.id) // Request data when user clicks "More"
                         setSelectedPeriodForDetails(period.id)
                       }}
                       className="text-xs text-primary-600 hover:text-primary-700 hover:underline"
@@ -701,13 +728,13 @@ export const ProfitDashboardScreen: React.FC = () => {
               <SellerboardProductsTable
                 products={productData}
                 isLoading={productLoading}
-                searchTerm={searchTerm}
+                searchTerm={debouncedSearchTerm}
               />
             ) : (
               <OrderItemsTable
                 orderItems={orderItemsData}
                 isLoading={orderItemsLoading}
-                searchTerm={searchTerm}
+                searchTerm={debouncedSearchTerm}
               />
             )}
           </div>
@@ -878,13 +905,13 @@ export const ProfitDashboardScreen: React.FC = () => {
                   <SellerboardProductsTable
                     products={productData}
                     isLoading={productLoading}
-                    searchTerm={searchTerm}
+                    searchTerm={debouncedSearchTerm}
                   />
                 ) : (
                   <OrderItemsTable
                     orderItems={orderItemsData}
                     isLoading={orderItemsLoading}
-                    searchTerm={searchTerm}
+                    searchTerm={debouncedSearchTerm}
                   />
                 )}
               </div>

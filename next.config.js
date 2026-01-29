@@ -13,60 +13,7 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@/design-system', '@/components'],
   },
-  // Webpack optimizations
-  webpack: (config, { isServer, dev }) => {
-    if (!isServer) {
-      // Ensure proper chunk naming for dynamic imports
-      config.output = {
-        ...config.output,
-        chunkFilename: dev ? '[name].js' : '[name].[contenthash].js',
-      }
-      
-      // Only optimize chunks in production
-      if (!dev) {
-        config.optimization = {
-          ...config.optimization,
-          splitChunks: {
-            chunks: 'all',
-            cacheGroups: {
-              default: false,
-              vendors: false,
-              // Separate chunk for recharts to avoid loading issues
-              recharts: {
-                name: 'recharts',
-                test: /[\\/]node_modules[\\/](recharts|d3-.*)[\\/]/,
-                priority: 30,
-                chunks: 'all',
-                enforce: true,
-              },
-              // Vendor chunk for other node_modules (excluding recharts)
-              vendor: {
-                name: 'vendor',
-                test: (module) => {
-                  // Match node_modules but exclude recharts and d3-*
-                  const modulePath = module.resource || ''
-                  return (
-                    /[\\/]node_modules[\\/]/.test(modulePath) &&
-                    !/[\\/]node_modules[\\/](recharts|d3-.*)[\\/]/.test(modulePath)
-                  )
-                },
-                priority: 20,
-                chunks: 'all',
-              },
-              // Common chunk for shared code
-              common: {
-                name: 'common',
-                minChunks: 2,
-                priority: 10,
-                reuseExistingChunk: true,
-              },
-            },
-          },
-        }
-      }
-    }
-    return config
-  },
+  // No custom webpack splitChunks/output - Next.js defaults avoid ChunkLoadError
 }
 
 module.exports = nextConfig

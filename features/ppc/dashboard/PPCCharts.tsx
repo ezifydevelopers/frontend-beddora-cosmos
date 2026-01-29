@@ -1,11 +1,24 @@
 'use client'
 
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { Card, CardContent, CardHeader, CardTitle } from '@/design-system/cards'
-import { LineChart } from '@/design-system/charts'
-import { Spinner } from '@/design-system/loaders'
+import { Spinner, ChartSkeleton } from '@/design-system/loaders'
 import { PPCOverview } from '@/types/ppcDashboard.types'
 import { ChartPalette } from '@/design-system/charts/ChartPalette'
+
+// Lazy-load the heavy LineChart component (includes Recharts)
+const LineChart = dynamic(
+  () => import('@/design-system/charts/LineChart').then((mod) => mod.LineChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex items-center justify-center">
+        <ChartSkeleton height="300px" />
+      </div>
+    ),
+  }
+)
 
 export interface PPCChartsProps {
   data?: PPCOverview

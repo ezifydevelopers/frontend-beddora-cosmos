@@ -182,7 +182,8 @@ export const kpisApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: UnitsSoldKPIResponse) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - KPI data changes but benefits from caching
+      keepUnusedDataFor: 120,
     }),
 
     /**
@@ -196,7 +197,8 @@ export const kpisApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: ReturnsCostKPIResponse) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - returns data changes but benefits from caching
+      keepUnusedDataFor: 120,
     }),
 
     /**
@@ -210,7 +212,8 @@ export const kpisApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: AdvertisingCostKPIResponse) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - PPC data can change but benefits from caching
+      keepUnusedDataFor: 120,
     }),
 
     /**
@@ -224,7 +227,8 @@ export const kpisApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: FBAFeesKPIResponse) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 180 seconds - FBA fees data is relatively stable
+      keepUnusedDataFor: 180,
     }),
 
     /**
@@ -238,7 +242,8 @@ export const kpisApi = baseApi.injectEndpoints({
       }),
       transformResponse: (response: PayoutEstimateKPIResponse) => response.data,
       providesTags: ['Profit'],
-      keepUnusedDataFor: 30,
+      // Cache for 120 seconds - payout estimates can change but benefit from caching
+      keepUnusedDataFor: 120,
     }),
   }),
 })
