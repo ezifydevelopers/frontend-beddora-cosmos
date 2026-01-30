@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import { ResetPasswordForm } from '@/features/auth'
 import { Container } from '@/components/layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/design-system/cards'
+import { Spinner } from '@/design-system/loaders'
 
 /**
  * Reset password page
@@ -17,7 +18,9 @@ export default function ResetPasswordPage() {
             <CardTitle className="text-2xl text-center">Reset your password</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResetPasswordForm />
+            <Suspense fallback={<div className="flex justify-center py-12"><Spinner /></div>}>
+              <ResetPasswordForm />
+            </Suspense>
           </CardContent>
         </Card>
       </Container>

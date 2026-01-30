@@ -6,15 +6,16 @@ import { Input, Select } from '@/design-system/inputs'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setPOFilters, setSelectedPOId } from '@/store/inventoryPOs.slice'
 import { useGetAccountsQuery } from '@/services/api/accounts.api'
+import { PurchaseOrderStatus } from '@/services/api/purchaseOrders.api'
 import {
   CreatePurchaseOrderForm,
-  POAlerts,
+  // POAlerts,
   PurchaseOrderDetail,
   PurchaseOrderTable,
   InboundShipmentTable,
   useFetchPOs,
   useFetchPOById,
-  useFetchPOAlerts,
+  // useFetchPOAlerts,
   useFetchInboundShipments,
   useCreatePO,
 } from '@/features/inventory/purchase-orders'
@@ -40,18 +41,19 @@ export default function PurchaseOrdersPage() {
   })
 
   const { data: poDetail, isLoading: poDetailLoading } = useFetchPOById(
-    { id: selectedPOId || '', accountId: effectiveFilters.accountId },
-    { skip: !selectedPOId || !effectiveFilters.accountId }
+    selectedPOId || '',
+    { skip: !selectedPOId }
   )
 
-  const { data: poAlerts, isLoading: poAlertsLoading } = useFetchPOAlerts(effectiveFilters, {
-    skip: !effectiveFilters.accountId,
-  })
+  // TODO: Implement alerts functionality
+  // const { data: poAlerts, isLoading: poAlertsLoading } = useFetchPOAlerts(effectiveFilters, {
+  //   skip: !effectiveFilters.accountId,
+  // })
 
-  const { data: inboundData, isLoading: inboundLoading } = useFetchInboundShipments(
-    { accountId: effectiveFilters.accountId },
-    { skip: !effectiveFilters.accountId }
-  )
+  // TODO: Replace with real inbound shipments API when available
+  // const { data: inboundData, isLoading: inboundLoading } = useFetchInboundShipments(...)
+  const inboundData: undefined = undefined
+  const inboundLoading = false
 
   const [createPO, { isLoading: creatingPO }] = useCreatePO()
 
@@ -84,20 +86,22 @@ export default function PurchaseOrdersPage() {
             label="Status"
             options={[
               { label: 'All', value: '' },
-              { label: 'Pending', value: 'pending' },
-              { label: 'In Transit', value: 'in-transit' },
+              { label: 'Draft', value: 'draft' },
+              { label: 'Ordered', value: 'ordered' },
+              { label: 'Shipped', value: 'shipped' },
               { label: 'Received', value: 'received' },
-              { label: 'Canceled', value: 'canceled' },
+              { label: 'Cancelled', value: 'cancelled' },
             ]}
             value={filters.status || ''}
-            onChange={(e) => dispatch(setPOFilters({ status: e.target.value || undefined }))}
+            onChange={(e) => dispatch(setPOFilters({ status: e.target.value ? e.target.value as PurchaseOrderStatus : undefined }))}
           />
         </div>
 
-        <POAlerts data={poAlerts} isLoading={poAlertsLoading} error={poError} />
+        {/* TODO: Implement alerts functionality */}
+        {/* <POAlerts data={poAlerts} isLoading={poAlertsLoading} error={poError} /> */}
 
         <PurchaseOrderTable
-          items={poData?.data}
+          items={poData}
           isLoading={poLoading}
           error={poError}
           onSelect={(id) => dispatch(setSelectedPOId(id))}
@@ -107,7 +111,7 @@ export default function PurchaseOrdersPage() {
           <PurchaseOrderDetail data={poDetail} isLoading={poDetailLoading} />
         )}
 
-        <InboundShipmentTable items={inboundData?.data} isLoading={inboundLoading} />
+        <InboundShipmentTable items={inboundData ?? []} isLoading={inboundLoading} />
 
         <CreatePurchaseOrderForm
           accountId={effectiveFilters.accountId}

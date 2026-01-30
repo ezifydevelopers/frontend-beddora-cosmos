@@ -5,21 +5,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/design-system/cards'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/design-system/tables'
 import { Badge } from '@/design-system/badges'
 import { Spinner } from '@/design-system/loaders'
-import { PurchaseOrder } from '@/types/purchaseOrders.types'
+import { PurchaseOrderItem } from '@/services/api/purchaseOrders.api'
 import { formatDate, formatNumber } from '@/utils/format'
 
 export interface PurchaseOrderTableProps {
-  items?: PurchaseOrder[]
+  items?: PurchaseOrderItem[]
   isLoading?: boolean
   error?: any
   onSelect?: (id: string) => void
 }
 
 const statusVariantMap: Record<string, { label: string; variant: 'success' | 'warning' | 'error' | 'secondary' }> = {
-  pending: { label: 'Pending', variant: 'secondary' },
-  'in-transit': { label: 'In Transit', variant: 'warning' },
+  draft: { label: 'Draft', variant: 'secondary' },
+  ordered: { label: 'Ordered', variant: 'warning' },
+  shipped: { label: 'Shipped', variant: 'warning' },
   received: { label: 'Received', variant: 'success' },
-  canceled: { label: 'Canceled', variant: 'error' },
+  cancelled: { label: 'Cancelled', variant: 'error' },
 }
 
 export const PurchaseOrderTable: React.FC<PurchaseOrderTableProps> = ({
@@ -78,7 +79,6 @@ export const PurchaseOrderTable: React.FC<PurchaseOrderTableProps> = ({
             <TableRow>
               <TableHead>PO Number</TableHead>
               <TableHead>Supplier</TableHead>
-              <TableHead>Marketplace</TableHead>
               <TableHead className="text-right">Qty</TableHead>
               <TableHead className="text-right">Total Cost</TableHead>
               <TableHead>ETA</TableHead>
@@ -87,16 +87,15 @@ export const PurchaseOrderTable: React.FC<PurchaseOrderTableProps> = ({
           </TableHeader>
           <TableBody>
             {items.map((po) => {
-              const statusConfig = statusVariantMap[po.status] || statusVariantMap.pending
+              const statusConfig = statusVariantMap[po.status] || statusVariantMap.draft
               return (
                 <TableRow key={po.id} onClick={() => onSelect?.(po.id)} className="cursor-pointer">
                   <TableCell className="font-medium">{po.poNumber}</TableCell>
                   <TableCell>{po.supplier?.name || '—'}</TableCell>
-                  <TableCell>{po.marketplace?.name || 'All'}</TableCell>
-                  <TableCell className="text-right">{formatNumber(po.totalQuantity, 0)}</TableCell>
-                  <TableCell className="text-right">{formatNumber(po.totalCost, 2)}</TableCell>
+                  <TableCell className="text-right">{formatNumber(po.totalUnits, 0)}</TableCell>
+                  <TableCell className="text-right">${formatNumber(po.totalCost, 2)}</TableCell>
                   <TableCell>
-                    {po.estimatedDeliveryDate ? formatDate(po.estimatedDeliveryDate) : '—'}
+                    {po.estimatedArrival ? formatDate(po.estimatedArrival) : '—'}
                   </TableCell>
                   <TableCell>
                     <Badge variant={statusConfig.variant} size="sm">

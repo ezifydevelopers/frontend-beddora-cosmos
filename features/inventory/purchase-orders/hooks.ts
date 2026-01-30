@@ -1,22 +1,20 @@
 import {
   useGetPurchaseOrdersQuery,
-  useGetPurchaseOrderByIdQuery,
+  useGetPurchaseOrderQuery,
   useCreatePurchaseOrderMutation,
   useUpdatePurchaseOrderMutation,
   useDeletePurchaseOrderMutation,
-  useGetInboundShipmentsQuery,
-  useUpdateInboundShipmentMutation,
-  useGetPurchaseOrderAlertsQuery,
-  useDuplicatePurchaseOrderMutation,
+  useGetPurchaseOrderSummaryQuery,
 } from '@/services/api/purchaseOrders.api'
 
 export const useFetchPOs = useGetPurchaseOrdersQuery
-export const useFetchPOById = useGetPurchaseOrderByIdQuery
+export const useFetchPOById = useGetPurchaseOrderQuery
 export const useCreatePO = useCreatePurchaseOrderMutation
 export const useUpdatePO = useUpdatePurchaseOrderMutation
 export const useDeletePO = useDeletePurchaseOrderMutation
-export const useFetchInboundShipments = useGetInboundShipmentsQuery
-export const useUpdateInboundShipment = useUpdateInboundShipmentMutation
-export const useFetchPOAlerts = useGetPurchaseOrderAlertsQuery
-export const useDuplicatePO = useDuplicatePurchaseOrderMutation
+export const useFetchPOAlerts = useGetPurchaseOrderSummaryQuery
+// Placeholder exports for features not yet implemented
+export const useFetchInboundShipments = useGetPurchaseOrdersQuery
+export const useUpdateInboundShipment = useUpdatePurchaseOrderMutation
+export const useDuplicatePO = useCreatePurchaseOrderMutation
 

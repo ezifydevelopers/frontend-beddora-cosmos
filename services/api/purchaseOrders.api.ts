@@ -1,121 +1,188 @@
 import { baseApi } from './baseApi'
-import {
-  PurchaseOrderCreateRequest,
-  PurchaseOrderDuplicateRequest,
-  PurchaseOrderFilters,
-  PurchaseOrderListResponse,
-  PurchaseOrderUpdateRequest,
-  PurchaseOrder,
-  InboundShipmentFilters,
-  InboundShipmentResponse,
-  InboundShipmentUpdateRequest,
-  POAlertsResponse,
-} from '@/types/purchaseOrders.types'
 
+/**
+ * Purchase Order Status Types
+ */
+export type PurchaseOrderStatus = 'draft' | 'ordered' | 'shipped' | 'received' | 'cancelled'
+
+/**
+ * Purchase Order Summary by Status
+ */
+export interface PurchaseOrderSummary {
+  status: PurchaseOrderStatus
+  count: number
+  totalCost: number
+  totalUnits: number
+}
+
+/**
+ * Purchase Order Item
+ */
+export interface PurchaseOrderItem {
+  id: string
+  poNumber: string
+  poDate: string
+  supplier: {
+    id: string
+    name: string
+  }
+  products: {
+    id: string
+    sku: string
+    title: string
+    quantity: number
+    unitCost: number
+  }[]
+  totalUnits: number
+  totalCost: number
+  estimatedArrival?: string
+  comment?: string
+  fbaShipments?: string[]
+  status: PurchaseOrderStatus
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Purchase Order Filters
+ */
+export interface PurchaseOrderFilters {
+  accountId?: string
+  search?: string
+  searchByPOName?: string
+  supplierId?: string
+  status?: PurchaseOrderStatus
+  startDate?: string
+  endDate?: string
+}
+
+/**
+ * Create Purchase Order Request
+ */
+export interface CreatePurchaseOrderRequest {
+  supplierId: string
+  products: {
+    productId: string
+    quantity: number
+    unitCost: number
+  }[]
+  estimatedArrival?: string
+  comment?: string
+}
+
+/**
+ * Update Purchase Order Request
+ */
+export interface UpdatePurchaseOrderRequest {
+  supplierId?: string
+  products?: {
+    productId: string
+    quantity: number
+    unitCost: number
+  }[]
+  estimatedArrival?: string
+  comment?: string
+  status?: PurchaseOrderStatus
+}
+
+/**
+ * Purchase Orders API
+ */
 export const purchaseOrdersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getPurchaseOrders: builder.query<PurchaseOrderListResponse, PurchaseOrderFilters>({
+    /**
+     * Get purchase order summary by status
+     */
+    getPurchaseOrderSummary: builder.query<PurchaseOrderSummary[], PurchaseOrderFilters>({
+      query: (filters) => ({
+        url: '/purchase-orders/summary',
+        params: filters,
+      }),
+      providesTags: ['PurchaseOrders'],
+    }),
+
+    /**
+     * Get all purchase orders
+     */
+    getPurchaseOrders: builder.query<PurchaseOrderItem[], PurchaseOrderFilters>({
       query: (filters) => ({
         url: '/purchase-orders',
         params: filters,
       }),
       providesTags: ['PurchaseOrders'],
-      keepUnusedDataFor: 30,
-      transformResponse: (response: { success: boolean; data: PurchaseOrderListResponse }) => response.data,
     }),
-    getPurchaseOrderById: builder.query<PurchaseOrder, { id: string; accountId: string }>({
-      query: ({ id, accountId }) => ({
+
+    /**
+     * Get single purchase order
+     */
+    getPurchaseOrder: builder.query<PurchaseOrderItem, string>({
+      query: (id) => ({
         url: `/purchase-orders/${id}`,
-        params: { accountId },
       }),
-      providesTags: (result, error, { id }) => [{ type: 'PurchaseOrders', id }],
-      keepUnusedDataFor: 30,
-      transformResponse: (response: { success: boolean; data: PurchaseOrder }) => response.data,
+      providesTags: ['PurchaseOrders'],
     }),
-    createPurchaseOrder: builder.mutation<PurchaseOrder, PurchaseOrderCreateRequest>({
-      query: (payload) => ({
+
+    /**
+     * Create purchase order
+     */
+    createPurchaseOrder: builder.mutation<PurchaseOrderItem, CreatePurchaseOrderRequest>({
+      query: (body) => ({
         url: '/purchase-orders',
         method: 'POST',
-        body: payload,
+        body,
       }),
       invalidatesTags: ['PurchaseOrders'],
-      transformResponse: (response: { success: boolean; data: PurchaseOrder }) => response.data,
     }),
+
+    /**
+     * Update purchase order
+     */
     updatePurchaseOrder: builder.mutation<
-      PurchaseOrder,
-      { id: string; payload: PurchaseOrderUpdateRequest }
+      PurchaseOrderItem,
+      { id: string; data: UpdatePurchaseOrderRequest }
     >({
-      query: ({ id, payload }) => ({
+      query: ({ id, data }) => ({
         url: `/purchase-orders/${id}`,
         method: 'PATCH',
-        body: payload,
+        body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'PurchaseOrders', id }, 'PurchaseOrders'],
-      transformResponse: (response: { success: boolean; data: PurchaseOrder }) => response.data,
+      invalidatesTags: ['PurchaseOrders'],
     }),
-    deletePurchaseOrder: builder.mutation<void, { id: string; accountId: string }>({
-      query: ({ id, accountId }) => ({
+
+    /**
+     * Delete purchase order
+     */
+    deletePurchaseOrder: builder.mutation<void, string>({
+      query: (id) => ({
         url: `/purchase-orders/${id}`,
         method: 'DELETE',
-        params: { accountId },
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'PurchaseOrders', id }, 'PurchaseOrders'],
-    }),
-    duplicatePurchaseOrder: builder.mutation<
-      PurchaseOrder,
-      { id: string; payload: PurchaseOrderDuplicateRequest }
-    >({
-      query: ({ id, payload }) => ({
-        url: `/purchase-orders/${id}/duplicate`,
-        method: 'POST',
-        body: payload,
       }),
       invalidatesTags: ['PurchaseOrders'],
-      transformResponse: (response: { success: boolean; data: PurchaseOrder }) => response.data,
     }),
-    getPurchaseOrderAlerts: builder.query<POAlertsResponse, PurchaseOrderFilters>({
-      query: (filters) => ({
-        url: '/purchase-orders/alerts',
-        params: filters,
-      }),
-      providesTags: ['PurchaseOrders'],
-      keepUnusedDataFor: 30,
-      transformResponse: (response: { success: boolean; data: POAlertsResponse }) => response.data,
-    }),
-    getInboundShipments: builder.query<InboundShipmentResponse, InboundShipmentFilters>({
-      query: (filters) => ({
-        url: '/inbound-shipments',
-        params: filters,
-      }),
-      providesTags: ['InboundShipments'],
-      keepUnusedDataFor: 30,
-      transformResponse: (response: { success: boolean; data: InboundShipmentResponse }) => response.data,
-    }),
-    updateInboundShipment: builder.mutation<
-      InboundShipmentResponse['data'][number],
-      { id: string; payload: InboundShipmentUpdateRequest }
+
+    /**
+     * Update purchase order status
+     */
+    updatePurchaseOrderStatus: builder.mutation<
+      void,
+      { id: string; status: PurchaseOrderStatus }
     >({
-      query: ({ id, payload }) => ({
-        url: `/inbound-shipments/${id}`,
+      query: ({ id, status }) => ({
+        url: `/purchase-orders/${id}/status`,
         method: 'PATCH',
-        body: payload,
+        body: { status },
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'InboundShipments', id }, 'InboundShipments'],
-      transformResponse: (response: { success: boolean; data: InboundShipmentResponse['data'][number] }) =>
-        response.data,
+      invalidatesTags: ['PurchaseOrders'],
     }),
   }),
 })
 
 export const {
+  useGetPurchaseOrderSummaryQuery,
   useGetPurchaseOrdersQuery,
-  useGetPurchaseOrderByIdQuery,
+  useGetPurchaseOrderQuery,
   useCreatePurchaseOrderMutation,
   useUpdatePurchaseOrderMutation,
   useDeletePurchaseOrderMutation,
-  useDuplicatePurchaseOrderMutation,
-  useGetPurchaseOrderAlertsQuery,
-  useGetInboundShipmentsQuery,
-  useUpdateInboundShipmentMutation,
+  useUpdatePurchaseOrderStatusMutation,
 } = purchaseOrdersApi
-

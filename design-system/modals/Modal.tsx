@@ -66,10 +66,12 @@ export const Modal: React.FC<ModalProps> = ({
     xl: 'max-w-4xl',
   }
 
+  console.log('Modal rendering with isOpen=true')
+  
   return (
-    <div className="ds-modal-wrap" onClick={onClose}>
+    <div className="ds-modal-wrap" onClick={onClose} style={{ zIndex: 9999 }}>
       {/* Backdrop */}
-      <div className="ds-modal-backdrop" />
+      <div className="ds-modal-backdrop" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />
       
       {/* Modal */}
       <div
@@ -79,6 +81,7 @@ export const Modal: React.FC<ModalProps> = ({
           className
         )}
         onClick={(e) => e.stopPropagation()}
+        style={{ zIndex: 10000 }}
       >
         {title && (
           <div className="ds-modal-header">

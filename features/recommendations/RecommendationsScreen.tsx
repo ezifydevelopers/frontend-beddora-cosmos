@@ -8,10 +8,136 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 
 type RecommendationTab = 'bids' | 'well-performing' | 'poorly-performing' | 'budget' | 'keyword-isolation'
 
+interface Recommendation {
+  id: string
+  campaign: string
+  adGroup: string
+  keyword: string
+  currentBid: number
+  recommendedBid: number
+  ppcSales: number
+  adSpend: number
+  acos: number
+}
+
 export const RecommendationsScreen = React.memo(() => {
   const [activeTab, setActiveTab] = useState<RecommendationTab>('bids')
   const [searchTerm, setSearchTerm] = useState('')
   const [campaignFilter, setCampaignFilter] = useState('all')
+  
+  // Mock recommendations data
+  const [recommendations] = useState<Recommendation[]>([
+    {
+      id: '1',
+      campaign: 'Winter Sale 2026',
+      adGroup: 'Electronics - High Performers',
+      keyword: 'wireless headphones',
+      currentBid: 1.25,
+      recommendedBid: 1.55,
+      ppcSales: 4250.00,
+      adSpend: 425.00,
+      acos: 10.0,
+    },
+    {
+      id: '2',
+      campaign: 'Holiday Campaign',
+      adGroup: 'Home & Kitchen',
+      keyword: 'kitchen gadgets',
+      currentBid: 0.85,
+      recommendedBid: 0.65,
+      ppcSales: 1200.00,
+      adSpend: 380.00,
+      acos: 31.7,
+    },
+    {
+      id: '3',
+      campaign: 'Brand Defense',
+      adGroup: 'Brand Keywords',
+      keyword: 'beddora products',
+      currentBid: 0.95,
+      recommendedBid: 1.15,
+      ppcSales: 5600.00,
+      adSpend: 450.00,
+      acos: 8.0,
+    },
+    {
+      id: '4',
+      campaign: 'Q1 Clearance',
+      adGroup: 'Sports Equipment',
+      keyword: 'yoga mats',
+      currentBid: 0.75,
+      recommendedBid: 0.95,
+      ppcSales: 2800.00,
+      adSpend: 280.00,
+      acos: 10.0,
+    },
+    {
+      id: '5',
+      campaign: 'New Product Launch',
+      adGroup: 'Launch Products',
+      keyword: 'smart home devices',
+      currentBid: 1.50,
+      recommendedBid: 1.85,
+      ppcSales: 6400.00,
+      adSpend: 640.00,
+      acos: 10.0,
+    },
+    {
+      id: '6',
+      campaign: 'Winter Sale 2026',
+      adGroup: 'Fashion - Bestsellers',
+      keyword: 'winter jackets',
+      currentBid: 1.10,
+      recommendedBid: 0.85,
+      ppcSales: 1850.00,
+      adSpend: 650.00,
+      acos: 35.1,
+    },
+    {
+      id: '7',
+      campaign: 'Holiday Campaign',
+      adGroup: 'Electronics - Budget',
+      keyword: 'bluetooth speakers',
+      currentBid: 0.90,
+      recommendedBid: 1.10,
+      ppcSales: 3200.00,
+      adSpend: 320.00,
+      acos: 10.0,
+    },
+    {
+      id: '8',
+      campaign: 'Winter Sale 2026',
+      adGroup: 'Home Decor',
+      keyword: 'wall art prints',
+      currentBid: 0.65,
+      recommendedBid: 0.85,
+      ppcSales: 1900.00,
+      adSpend: 190.00,
+      acos: 10.0,
+    },
+    {
+      id: '9',
+      campaign: 'Q1 Clearance',
+      adGroup: 'Pet Supplies',
+      keyword: 'dog toys',
+      currentBid: 0.55,
+      recommendedBid: 0.75,
+      ppcSales: 1500.00,
+      adSpend: 150.00,
+      acos: 10.0,
+    },
+    {
+      id: '10',
+      campaign: 'Brand Defense',
+      adGroup: 'Competitor Terms',
+      keyword: 'competitor brand',
+      currentBid: 1.35,
+      recommendedBid: 0.95,
+      ppcSales: 980.00,
+      adSpend: 420.00,
+      acos: 42.9,
+    },
+  ])
 
   const tabs = [
     { id: 'bids' as const, label: 'Bids' },
@@ -118,11 +244,43 @@ export const RecommendationsScreen = React.memo(() => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-12">
-                  <div className="text-text-muted">No data available</div>
-                </TableCell>
-              </TableRow>
+              {recommendations.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center py-12">
+                    <div className="text-text-muted">No data available</div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                recommendations.map((rec) => (
+                  <TableRow key={rec.id}>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div className="font-medium">{rec.campaign}</div>
+                        <div className="text-text-muted">{rec.adGroup}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{rec.keyword}</TableCell>
+                    <TableCell>${rec.currentBid.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <span className={rec.recommendedBid > rec.currentBid ? 'text-success-600' : 'text-danger-600'}>
+                        ${rec.recommendedBid.toFixed(2)}
+                      </span>
+                    </TableCell>
+                    <TableCell>${rec.ppcSales.toFixed(2)}</TableCell>
+                    <TableCell>${rec.adSpend.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <span className={rec.acos <= 15 ? 'text-success-600' : rec.acos <= 25 ? 'text-warning-600' : 'text-danger-600'}>
+                        {rec.acos.toFixed(1)}%
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <input type="checkbox" className="w-4 h-4" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

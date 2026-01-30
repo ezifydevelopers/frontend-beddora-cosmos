@@ -52,6 +52,15 @@ export const tagTypes = [
   'QueueStats',
   'FailedJobs',
   'RetryStats',
+  'Repricer',
+  'ResellerWorkflow',
+  'Suppliers',
+  'AutoresponderCampaigns',
+  'AutoresponderProducts',
+  'AutoresponderOrders',
+  'MoneyBack',
+  'Alerts',
+  'EbayProducts',
 ] as const
 
 export type TagType = typeof tagTypes[number]

@@ -1,8 +1,10 @@
+import type { PurchaseOrderStatus } from '@/services/api/purchaseOrders.api'
+
 export interface PurchaseOrderFilters {
   accountId: string
   supplierId?: string
   marketplaceId?: string
-  status?: string
+  status?: PurchaseOrderStatus
   sku?: string
 }
 

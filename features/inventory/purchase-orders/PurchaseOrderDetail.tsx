@@ -4,11 +4,11 @@ import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/design-system/cards'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/design-system/tables'
 import { Spinner } from '@/design-system/loaders'
-import { PurchaseOrder } from '@/types/purchaseOrders.types'
+import { PurchaseOrderItem } from '@/services/api/purchaseOrders.api'
 import { formatDate, formatNumber } from '@/utils/format'
 
 export interface PurchaseOrderDetailProps {
-  data?: PurchaseOrder
+  data?: PurchaseOrderItem
   isLoading?: boolean
   error?: any
 }
@@ -58,7 +58,7 @@ export const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ data, 
           <div>
             <div className="text-sm text-text-muted">Estimated Delivery</div>
             <div className="font-medium">
-              {data.estimatedDeliveryDate ? formatDate(data.estimatedDeliveryDate) : '—'}
+              {data.estimatedArrival ? formatDate(data.estimatedArrival) : '—'}
             </div>
           </div>
           <div>
@@ -77,12 +77,12 @@ export const PurchaseOrderDetail: React.FC<PurchaseOrderDetailProps> = ({ data, 
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.items?.map((item) => (
+            {data.products?.map((item) => (
               <TableRow key={item.id}>
                 <TableCell className="font-medium">{item.sku}</TableCell>
                 <TableCell className="text-right">{formatNumber(item.quantity, 0)}</TableCell>
                 <TableCell className="text-right">{formatNumber(item.unitCost, 2)}</TableCell>
-                <TableCell className="text-right">{formatNumber(item.totalCost, 2)}</TableCell>
+                <TableCell className="text-right">{formatNumber(item.quantity * item.unitCost, 2)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

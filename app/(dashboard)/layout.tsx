@@ -59,18 +59,21 @@ export default function DashboardLayout({
           href: '/dashboard/inventory',
           icon: NavIcons.inventory,
           children: [
-            { label: 'Overview', href: '/dashboard/inventory' },
+            { label: 'Planner', href: '/dashboard/inventory/planner' },
             { label: 'Purchase Orders', href: '/dashboard/inventory/purchase-orders' },
-            { label: 'Products', href: '/dashboard/inventory/products' },
+            { label: 'Reseller Workflow', href: '/dashboard/inventory/reseller-workflow' },
+            { label: 'FBA Shipments', href: '/dashboard/inventory/fba-shipments' },
+            { label: 'Suppliers', href: '/dashboard/inventory/suppliers' },
           ],
         },
         {
           label: 'Autoresponder',
           href: '/dashboard/autoresponder',
-          icon: NavIcons.reports,
+          icon: NavIcons.mail,
           children: [
-            { label: 'Templates', href: '/dashboard/autoresponder/templates' },
-            { label: 'History', href: '/dashboard/autoresponder/history' },
+            { label: 'Campaigns', href: '/dashboard/autoresponder/campaigns' },
+            { label: 'Products', href: '/dashboard/autoresponder/products' },
+            { label: 'Orders', href: '/dashboard/autoresponder/orders' },
           ],
         },
         {
@@ -78,8 +81,10 @@ export default function DashboardLayout({
           href: '/dashboard/money-back',
           icon: NavIcons.reports,
           children: [
-            { label: 'Claims', href: '/dashboard/money-back/claims' },
-            { label: 'History', href: '/dashboard/money-back/history' },
+            { label: 'Lost & Damaged', href: '/dashboard/money-back/lost-damaged' },
+            { label: 'Returns', href: '/dashboard/money-back/returns' },
+            { label: 'FBA Fee Changes', href: '/dashboard/money-back/fba-fee-changes' },
+            { label: 'Reimbursement Gap', href: '/dashboard/money-back/reimbursement-gap' },
           ],
         },
         {
@@ -88,8 +93,8 @@ export default function DashboardLayout({
           icon: NavIcons.alerts,
           badge: '3',
           children: [
-            { label: 'Active', href: '/dashboard/alerts/active' },
-            { label: 'History', href: '/dashboard/alerts/history' },
+            { label: 'Dashboard', href: '/dashboard/alerts/dashboard' },
+            { label: 'Settings', href: '/dashboard/alerts/settings' },
           ],
         },
         { label: 'Keyword Research', href: '/dashboard/keyword-research', icon: NavIcons.keyword },
@@ -98,8 +103,12 @@ export default function DashboardLayout({
           href: '/dashboard/ebay',
           icon: NavIcons.products,
           children: [
-            { label: 'Listings', href: '/dashboard/ebay/listings' },
+            { label: 'Dashboard', href: '/dashboard/ebay/dashboard' },
+            { label: 'LTV', href: '/dashboard/ebay/ltv' },
+            { label: 'Products', href: '/dashboard/ebay/products' },
+            { label: 'Shipping costs', href: '/dashboard/ebay/shipping-costs' },
             { label: 'Orders', href: '/dashboard/ebay/orders' },
+            { label: 'Expenses', href: '/dashboard/ebay/expenses' },
           ],
         },
         {
@@ -107,8 +116,12 @@ export default function DashboardLayout({
           href: '/dashboard/walmart',
           icon: NavIcons.products,
           children: [
-            { label: 'Listings', href: '/dashboard/walmart/listings' },
-            { label: 'Orders', href: '/dashboard/walmart/orders' },
+            { label: 'Dashboard', href: '/dashboard/walmart/dashboard' },
+            { label: 'PPC', href: '/dashboard/walmart/ppc' },
+            { label: 'Products', href: '/dashboard/walmart/products' },
+            { label: 'Shipping costs', href: '/dashboard/walmart/shipping-costs' },
+            { label: 'Pick & pack', href: '/dashboard/walmart/pick-pack' },
+            { label: 'Indirect Expenses', href: '/dashboard/walmart/indirect-expenses' },
           ],
         },
         { label: 'Shopify', href: '/dashboard/shopify', icon: NavIcons.products },
@@ -117,8 +130,9 @@ export default function DashboardLayout({
           href: '/dashboard/quickbooks',
           icon: NavIcons.reports,
           children: [
-            { label: 'Sync', href: '/dashboard/quickbooks/sync' },
-            { label: 'Settings', href: '/dashboard/quickbooks/settings' },
+            { label: 'Settlements', href: '/dashboard/quickbooks/settlements' },
+            { label: 'Configuration of QB accounts', href: '/dashboard/quickbooks/configuration' },
+            { label: 'Connection', href: '/dashboard/quickbooks/connection' },
           ],
         },
         {
@@ -126,8 +140,10 @@ export default function DashboardLayout({
           href: '/dashboard/settings',
           icon: NavIcons.settings,
           children: [
-            { label: 'Account', href: '/dashboard/settings/account' },
-            { label: 'Integrations', href: '/dashboard/settings/integrations' },
+            { label: 'General', href: '/dashboard/settings/general' },
+            { label: 'Users', href: '/dashboard/settings/users' },
+            { label: 'Automation', href: '/dashboard/settings/automation' },
+            { label: 'Tell a friend', href: '/dashboard/settings/tell-a-friend' },
             { label: 'Billing', href: '/dashboard/settings/billing' },
           ],
         },
@@ -247,8 +263,10 @@ export default function DashboardLayout({
     },
   ], [])
 
-  // Check if we're on the profit dashboard page
+  // Check if we're on the profit or eBay dashboard page
   const isProfitDashboard = pathname?.includes('/dashboard/profit/dashboard')
+  const isEbayDashboard = pathname?.includes('/dashboard/ebay/dashboard')
+  const showDashboardTabs = isProfitDashboard || isEbayDashboard
 
   const handleLogout = React.useCallback(async () => {
     try {
@@ -274,7 +292,7 @@ export default function DashboardLayout({
         />
         <div className="ds-main">
           {/* Suspense-wrapped component to read search params without blocking layout */}
-          {isProfitDashboard && (
+          {showDashboardTabs && (
             <Suspense fallback={null}>
               <DashboardTabSync
                 onTabChange={setActiveDashboardTabState}
@@ -290,10 +308,10 @@ export default function DashboardLayout({
             periodValue={periodValue}
             onMarketplaceChange={setMarketplaceValue}
             onPeriodChange={setPeriodValue}
-            dashboardTitle={isProfitDashboard ? 'Dashboard' : undefined}
-            dashboardTabs={isProfitDashboard ? dashboardTabs : undefined}
-            activeDashboardTab={isProfitDashboard ? activeDashboardTab : undefined}
-            onDashboardTabChange={isProfitDashboard ? setActiveDashboardTab : undefined}
+            dashboardTitle={showDashboardTabs ? 'Dashboard' : undefined}
+            dashboardTabs={showDashboardTabs ? dashboardTabs : undefined}
+            activeDashboardTab={showDashboardTabs ? activeDashboardTab : undefined}
+            onDashboardTabChange={showDashboardTabs ? setActiveDashboardTab : undefined}
           />
           <main className="ds-content">{children}</main>
         </div>
