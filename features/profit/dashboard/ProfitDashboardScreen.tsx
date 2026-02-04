@@ -39,7 +39,7 @@ type TimePeriod = 'today' | 'yesterday' | '7days' | '14days' | '30days'
 /**
  * Top navigation tab type
  */
-type DashboardTab = 'tiles' | 'chart' | 'p&l' | 'map' | 'trends' | 'sandbox'
+type DashboardTab = 'tiles' | 'chart' | 'pnl' | 'map' | 'trends' | 'sandbox'
 
 /**
  * Product/Order items view type
@@ -219,7 +219,7 @@ export const ProfitDashboardScreen: React.FC = () => {
 
   const { data: plData, isLoading: plLoading, error: plError } = useGetPLByPeriodsQuery(
     plFilters,
-    { skip: !effectiveAccountId || activeTab !== 'p&l' }
+    { skip: !effectiveAccountId || activeTab !== 'pnl' }
   )
 
   const periodCardsData = [
@@ -744,7 +744,7 @@ export const ProfitDashboardScreen: React.FC = () => {
       )}
 
       {/* P&L View */}
-      {activeTab === 'p&l' && (
+      {activeTab === 'pnl' && (
         <>
           {/* P&L Table */}
           <div className="mb-6">
