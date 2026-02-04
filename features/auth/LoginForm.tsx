@@ -36,7 +36,7 @@ export const LoginForm: React.FC = () => {
           accountId: result.accountId,
         })
       )
-      router.push('/dashboard')
+      router.push('/dashboard/profit/dashboard')
     } catch (err: any) {
       setError(err.data?.message || err.message || 'Login failed. Please try again.')
     }

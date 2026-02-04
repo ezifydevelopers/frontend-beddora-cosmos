@@ -42,7 +42,7 @@ export default function LoginPage() {
           accountId: result.accountId,
         })
       )
-      router.push('/dashboard')
+      router.push('/dashboard/profit/dashboard')
     } catch (err: any) {
       setError(err?.data?.error || 'Login failed. Please try again.')
     }
