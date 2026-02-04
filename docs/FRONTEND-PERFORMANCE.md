@@ -2,6 +2,14 @@
 
 If the app feels slow on the server, use this checklist. Most slowness comes from **running in dev mode** or **loading too much JS on first paint**.
 
+## Quick fix (do this first)
+
+1. **Always use production:** Run **`npm run build`** then **`npm start`** (never `npm run dev` on the server).
+2. **API URL:** Set **`NEXT_PUBLIC_API_URL`** in `.env` to your backend URL (e.g. `https://api.yourdomain.com/api`).
+3. **Backend:** If the backend is slow, see **backend-beddora-cosmos/docs/SERVER-PERFORMANCE.md** (use production, optional Redis off, DB connection limit).
+
+We also reduced frontend load on the server: **refetchOnFocus** is off (no refetch when you switch browser tabs), cache is **5 minutes**, and **polling** on inventory/profit charts is **60s** instead of 30s.
+
 ---
 
 ## 1. Run production build (most important)

@@ -80,8 +80,8 @@ export default function InventoryDashboardPage() {
     error: inventoryError,
   } = useFetchInventory(effectiveFilters, {
     skip: !effectiveFilters.accountId,
-    pollingInterval: 30000,
-    refetchOnFocus: true,
+    pollingInterval: 60000,
+    refetchOnFocus: false,
   })
 
   const {
@@ -96,8 +96,8 @@ export default function InventoryDashboardPage() {
     },
     {
       skip: !effectiveFilters.accountId,
-      pollingInterval: 30000,
-      refetchOnFocus: true,
+      pollingInterval: 60000,
+      refetchOnFocus: false,
     }
   )
 
@@ -107,8 +107,8 @@ export default function InventoryDashboardPage() {
     error: forecastError,
   } = useFetchForecast(effectiveForecastFilters, {
     skip: !effectiveForecastFilters.accountId,
-    pollingInterval: 30000,
-    refetchOnFocus: true,
+    pollingInterval: 60000,
+    refetchOnFocus: false,
   })
 
   const {
@@ -123,8 +123,8 @@ export default function InventoryDashboardPage() {
     },
     {
       skip: !effectiveForecastFilters.accountId,
-      pollingInterval: 30000,
-      refetchOnFocus: true,
+      pollingInterval: 60000,
+      refetchOnFocus: false,
     }
   )
 
@@ -134,8 +134,8 @@ export default function InventoryDashboardPage() {
     error: kpiError,
   } = useFetchInventoryKPIs(effectiveKpiFilters, {
     skip: !effectiveKpiFilters.accountId,
-    pollingInterval: 30000,
-    refetchOnFocus: true,
+    pollingInterval: 60000,
+    refetchOnFocus: false,
   })
 
   const selectedKpi = effectiveKpiFilters.sku
